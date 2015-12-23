@@ -1,0 +1,6 @@
+{
+    "name": "wizbii/pipeline",
+    "autoload": {
+        "psr-4": { "Wizbii\\PipelineBundle\\": ""}
+    }
+}
