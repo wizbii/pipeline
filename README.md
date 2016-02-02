@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/wizbii/pipeline.svg?branch=master)](https://travis-ci.org/wizbii/pipeline)
 
-# Alpha Relase
+# Alpha Release 
 
 # Project Goal
 Wizbii's Pipeline is a framework used to deal with backend pipelines. By "pipeline", we mean a list of actions that need to be performed following an event.
