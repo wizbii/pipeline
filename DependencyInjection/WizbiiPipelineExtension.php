@@ -26,7 +26,9 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        //$pipelineBuilderDefinition = new Definition(, [$config]);
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
+
         $container->register("wizbii.pipeline.factory", 'Wizbii\PipelineBundle\Factory\PipelineFactory');
         $pipelineDefinition = new Definition('Wizbii\PipelineBundle\Service\Pipeline', [$config]);
         $pipelineDefinition->setFactory([

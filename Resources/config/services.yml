@@ -1,0 +1,6 @@
+services:
+    wizbii.pipeline.rest.api.controller:
+        class: 'Wizbii\PipelineBundle\Controller\RestAPIController'
+        properties:
+            serializer: '@jms_serializer'
+            pipeline: '@wizbii.pipeline'
