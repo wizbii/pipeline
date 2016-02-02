@@ -1,4 +1,4 @@
-# Alpha Relase 
+# Alpha Relase  
 
 # Project Goal
 Wizbii's Pipeline is a framework used to deal with backend pipelines. By "pipeline", we mean a list of actions that need to be performed following an event.
