@@ -20,6 +20,38 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('wizbii_pipeline');
 
+        $rootNode
+            ->children()
+                ->arrayNode("actions")
+                    ->useAttributeAsKey('name')
+                    ->prototype("array")
+                        ->children()
+                            ->arrayNode('triggered_by_events')
+                                ->prototype('scalar')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode("stores")
+                    ->useAttributeAsKey('name')
+                        ->prototype("array")
+                            ->children()
+                                ->scalarNode('service')->end()
+                                ->arrayNode('triggered_by_actions')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                                ->arrayNode('triggered_by_stores')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                                ->arrayNode('triggered_events')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.

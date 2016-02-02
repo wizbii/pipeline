@@ -6,7 +6,7 @@ use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wizbii\PipelineBundle\Reader\MarkdownReader;
+use Wizbii\PipelineBundle\Service\Pipeline;
 
 /**
  * @DI\Service
@@ -21,19 +21,8 @@ class PipelineTestCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $markdownReader = new MarkdownReader();
-        $configuration =
-            '# pipeline example
-profile
-   - full
-      - proxy
-      - cache
-   - stats';
-        $stream = fopen('php://memory','r+');
-        fwrite($stream, $configuration);
-        rewind($stream);
-        $pipelines = $markdownReader->read($stream);
-        var_dump($pipelines);
+        echo "ola\n";
+        var_dump($this->pipeline);
     }
 
     protected function configure()
@@ -42,4 +31,10 @@ profile
             ->setName('wizbii:pipeline:test')
         ;
     }
+
+    /**
+     * @var Pipeline
+     * @DI\Inject("wizbii.pipeline")
+     */
+    public $pipeline;
 }
