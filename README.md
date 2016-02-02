@@ -20,66 +20,66 @@ The architecture is broken into several actors :
 # Configuration
 
 To configure a Pipeline, you can define a simple YML file included in your mail config.yml file See below for the reference of this file :
-```
-# Default configuration for extension with alias: "wizbii_pipeline"
-wizbii_pipeline:
-    actions:
 
-        # Prototype
-        name:
-            triggered_by_events:  []
-    stores:
+    # Default configuration for extension with alias: "wizbii_pipeline"
+    wizbii_pipeline:
+        actions:
 
-        # Prototype
-        name:
-            service:              ~
-            triggered_by_actions:  []
-            triggered_by_stores:  []
-            triggered_events:     []```
+            # Prototype
+            name:
+                triggered_by_events:  []
+        stores:
+
+            # Prototype
+            name:
+                service:              ~
+                triggered_by_actions:  []
+                triggered_by_stores:  []
+                triggered_events:     []
 
 A very simple example of such file in a social network context :
-```
-wizbii_pipeline:
-    actions:
-        profile_updated: ~
-        profile_anniversary: ~
-        profile_new_friends:
-            triggered_by_events: [profile_new_connection, profile_friends_new_connection, profile_new_school, profile_school_new_student]
-        profile_update_thanx: ~
 
-    stores:
-        # This store updates the projection containing profile network : friends, friends of friends and school friends
-        profile_network:
-            service: wizbii.pipeline.stores.profile.network
-            triggered_by_actions: [profile_new_friends]
-
-        # This store updates the projection containing profile thanxers
-        profile_thanx:
-            service: wizbii.pipeline.stores.profile.network
-            triggered_by_actions: [profile_update_thanx]
-
-        # This store updates the projection containing profile identity card : first_name, last_name, title, age, network
-        # and thanx counters
-        profile_identity_card:
-            service: wizbii.pipeline.stores.profile.identity_card
-            triggered_by_actions: [profile_updated, profile_anniversary]
-            triggered_by_stores: [profile_network, profile_thanx]
-
-        # This store updates the projection containing profile proxy
-        profile_proxy:
-            service: wizbii.pipeline.stores.profile.profile_proxy
-            triggered_by_actions: [profile_updated, profile_anniversary]
-            triggered_by_stores: [profile_network, profile_thanx]
-
-        # This store updates the projection containing profile stats
-        profile_stats:
-            service: wizbii.pipeline.stores.profile.profile_stats
-            triggered_by_actions: [profile_updated, profile_anniversary]
-            triggered_by_stores: [profile_network, profile_thanx]
-
-        # This store updates the projection containing ESProfile. Indexation in ElasticSearch is done asynchronously
-        profile_search:
-            service: wizbii.pipeline.stores.profile.profile_search
-            triggered_by_actions: [profile_updated, profile_anniversary]
-            triggered_by_stores: [profile_network, profile_thanx]
-            triggered_events: [esprofile_updated]```
+    wizbii_pipeline:
+        actions:
+            profile_updated: ~
+            profile_anniversary: ~
+            profile_new_friends:
+                triggered_by_events: [profile_new_connection, profile_friends_new_connection, profile_new_school, profile_school_new_student]
+            profile_update_thanx: ~
+    
+        stores:
+            # This store updates the projection containing profile network : friends, friends of friends and school friends
+            profile_network:
+                service: wizbii.pipeline.stores.profile.network
+                triggered_by_actions: [profile_new_friends]
+    
+            # This store updates the projection containing profile thanxers
+            profile_thanx:
+                service: wizbii.pipeline.stores.profile.network
+                triggered_by_actions: [profile_update_thanx]
+    
+            # This store updates the projection containing profile identity card : first_name, last_name, title, age, network
+            # and thanx counters
+            profile_identity_card:
+                service: wizbii.pipeline.stores.profile.identity_card
+                triggered_by_actions: [profile_updated, profile_anniversary]
+                triggered_by_stores: [profile_network, profile_thanx]
+    
+            # This store updates the projection containing profile proxy
+            profile_proxy:
+                service: wizbii.pipeline.stores.profile.profile_proxy
+                triggered_by_actions: [profile_updated, profile_anniversary]
+                triggered_by_stores: [profile_network, profile_thanx]
+    
+            # This store updates the projection containing profile stats
+            profile_stats:
+                service: wizbii.pipeline.stores.profile.profile_stats
+                triggered_by_actions: [profile_updated, profile_anniversary]
+                triggered_by_stores: [profile_network, profile_thanx]
+    
+            # This store updates the projection containing ESProfile. Indexation in ElasticSearch is done asynchronously
+            profile_search:
+                service: wizbii.pipeline.stores.profile.profile_search
+                triggered_by_actions: [profile_updated, profile_anniversary]
+                triggered_by_stores: [profile_network, profile_thanx]
+                triggered_events: [esprofile_updated]
