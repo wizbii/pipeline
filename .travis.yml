@@ -9,3 +9,6 @@ before_script:
     - php composer.phar install --dev
 
 script: ./vendor/phpunit/phpunit/phpunit
+
+notifications:
+  slack: wizbii:8bhSf4D5IDXCDCN906umk9Jr
