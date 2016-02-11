@@ -3,17 +3,26 @@
 namespace Wizbii\PipelineBundle\Factory;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Wizbii\PipelineBundle\Exception\CircularPipelineException;
 use Wizbii\PipelineBundle\Model\Action;
 use Wizbii\PipelineBundle\Model\ActionCreator;
 use Wizbii\PipelineBundle\Model\Event;
-use Wizbii\PipelineBundle\Service\Pipeline;
+use Wizbii\PipelineBundle\Model\Pipeline;
 use Wizbii\PipelineBundle\Model\Store;
 
 class PipelineFactory
 {
-    public function getPipeline($configuration)
+    /**
+     * @param $configuration
+     * @return Pipeline
+     * @throws CircularPipelineException
+     */
+    public function buildPipeline($configuration)
     {
         $pipeline = new Pipeline();
+
+        // set pipeline name
+        $this->buildName($pipeline, $configuration);
 
         // create Actions, Events and ActionCreators
         foreach ($configuration["actions"] as $actionName => $actionConfig) {
@@ -27,9 +36,24 @@ class PipelineFactory
         }
 
         // validate stores to ensure there is no circular references between them
-        $this->checkForCircularReferences($pipeline);
+        $pipeline->checkForCircularReferences();
 
         return $pipeline;
+    }
+
+    /**
+     * Set the pipeline name. Empty name will throw an exception
+     * @param Pipeline $pipeline
+     * @param array $configuration
+     * @throws InvalidConfigurationException
+     */
+    public function buildName($pipeline, $configuration)
+    {
+        $name = is_array($configuration) && array_key_exists("name", $configuration) ? $configuration["name"] : null;
+        if (empty($name)) {
+            throw new InvalidConfigurationException("Missing pipeline name");
+        }
+        $pipeline->setName($name);
     }
 
     /**
@@ -51,9 +75,9 @@ class PipelineFactory
         $action = new Action($actionName);
         $actionCreator = new ActionCreator($action);
         foreach ($triggeredByEvents as $triggeredByEvent) {
-            $event = $pipeline->hasEvent($triggeredByEvent) ? $pipeline->getEvent($triggeredByEvent) : new Event($triggeredByEvent);
+            $event = $pipeline->hasIncomingEvent($triggeredByEvent) ? $pipeline->getIncomingEvent($triggeredByEvent) : new Event($triggeredByEvent);
             $actionCreator->addTriggeredByEvent($event);
-            $pipeline->addEvent($event);
+            $pipeline->addIncomingEvent($event);
         }
         $pipeline->addAction($action);
         $pipeline->addActionCreator($actionCreator);
@@ -69,7 +93,7 @@ class PipelineFactory
     {
         $triggeredByActions = is_array($storeConfiguration) && array_key_exists("triggered_by_actions", $storeConfiguration) ? $storeConfiguration["triggered_by_actions"] : [];
         $triggeredByStores = is_array($storeConfiguration) && array_key_exists("triggered_by_stores", $storeConfiguration) ? $storeConfiguration["triggered_by_stores"] : [];
-        $triggeredEvents = is_array($storeConfiguration) && array_key_exists("triggered_events", $storeConfiguration) ? $storeConfiguration["triggered_events"] : [];
+        $triggeredEvent = is_array($storeConfiguration) && array_key_exists("triggered_event", $storeConfiguration) ? $storeConfiguration["triggered_event"] : null;
         $service = is_array($storeConfiguration) && array_key_exists("service", $storeConfiguration) ? $storeConfiguration["service"] : null;
 
         $store = $pipeline->hasStore($storeName) ? $pipeline->getStore($storeName) : new Store($storeName);
@@ -91,23 +115,13 @@ class PipelineFactory
         if ($store->isNeverTriggered()) {
             throw new InvalidConfigurationException("Store $storeName is never triggered");
         }
-        foreach ($triggeredEvents as $triggeredEvent) {
-            $event = $pipeline->hasEvent($triggeredEvent) ? $pipeline->getEvent($triggeredEvent) : new Event($triggeredEvent);
-            $store->addTriggeredEvent($event);
+
+        // add triggered event
+        if (isset($triggeredEvent)) {
+            $event = $pipeline->hasOutgoingEvent($triggeredEvent) ? $pipeline->getOutgoingEvent($triggeredEvent) : new Event($triggeredEvent);
+            $store->setTriggeredEvent($event);
+            $pipeline->addOutgoingEvent($event);
         }
         $pipeline->addStore($store);
-    }
-
-    /**
-     * @param Pipeline $pipeline
-     * @throws InvalidConfigurationException
-     */
-    public function checkForCircularReferences($pipeline)
-    {
-        foreach ($pipeline->getStores() as $storeName => $store) {
-            if ($store->dependsOnStore($store)) {
-                throw new InvalidConfigurationException("Store $storeName depends on itself");
-            }
-        }
     }
 }

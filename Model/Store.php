@@ -28,9 +28,9 @@ class Store
     protected $triggeredByActions = [];
 
     /**
-     * @var Event[]
+     * @var Event
      */
-    protected $triggeredEvents = [];
+    protected $triggeredEvent;
 
     /**
      * Store constructor.
@@ -162,26 +162,26 @@ class Store
     }
 
     /**
-     * @return Event[]
+     * @return Event
      */
-    public function getTriggeredEvents()
+    public function getTriggeredEvent()
     {
-        return $this->triggeredEvents;
+        return $this->triggeredEvent;
     }
 
     /**
-     * @param Event[] $triggeredEvents
+     * @param Event $triggeredEvent
      */
-    public function setTriggeredEvents($triggeredEvents)
+    public function setTriggeredEvent($triggeredEvent)
     {
-        $this->triggeredEvents = $triggeredEvents;
+        $this->triggeredEvent = $triggeredEvent;
     }
 
     /**
-     * @param Event $event
+     * @return bool
      */
-    public function addTriggeredEvent($event)
+    public function hasTriggeredEvent()
     {
-        $this->triggeredEvents[] = $event;
+        return !empty($this->triggeredEvent);
     }
 }

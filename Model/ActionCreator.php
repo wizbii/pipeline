@@ -62,4 +62,17 @@ class ActionCreator
     {
         $this->triggeredByEvents[] = $event;
     }
+
+    /**
+     * @param string $name
+     * @param string $properties
+     * @return Action
+     */
+    public function buildAction($name, $properties)
+    {
+        $action = new Action($name);
+        $action->setProperties($properties);
+
+        return $action;
+    }
 }

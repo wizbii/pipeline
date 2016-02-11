@@ -1,6 +1,36 @@
+parameters:
+    pipeline.consumer.front.class: 'Wizbii\PipelineBundle\Consumer\FrontConsumer'
+    pipeline.producer.class: 'Wizbii\PipelineBundle\Producer\Producer'
+
 services:
-    wizbii.pipeline.rest.api.controller:
+    pipeline.controller.api:
         class: 'Wizbii\PipelineBundle\Controller\RestAPIController'
         properties:
             serializer: '@jms_serializer'
-            pipeline: '@wizbii.pipeline'
+            pipelineProvider: '@pipeline.provider'
+
+    pipeline.consumers:
+        class: 'Wizbii\PipelineBundle\Service\Consumers'
+
+    pipeline.producers:
+        class: 'Wizbii\PipelineBundle\Service\Producers'
+
+    pipeline.dispatcher.event:
+        class: 'Wizbii\PipelineBundle\Dispatcher\Event\EventDispatcher'
+        properties:
+            producers: '@pipeline.producers'
+            logger: '@monolog.logger.pipeline'
+
+    pipeline.dispatcher.action:
+        class: 'Wizbii\PipelineBundle\Dispatcher\Action\ActionDispatcher'
+        properties:
+            pipelineProvider: '@pipeline.provider'
+            container: '@service_container'
+            logger: '@monolog.logger.pipeline'
+            eventDispatcher: '@pipeline.dispatcher.event'
+
+    pipeline.consumer.back:
+        class: 'Wizbii\PipelineBundle\Consumer\BackConsumer'
+        properties:
+            pipelineProvider: '@pipeline.provider'
+            actionDispatcher: '@pipeline.dispatcher.action'

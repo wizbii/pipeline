@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+COMPONENT_DIR="$(cd -P ${SCRIPT_DIR}/.. && pwd)"
+LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
+PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+PID_FRONT_FILE="${PROC_DIR}/front.pid"
+PID_BACK_FILE="${PROC_DIR}/back.pid"
+
+test -d ${LOG_DIR} || mkdir -p ${LOG_DIR}
+test -d ${PROC_DIR} || mkdir -p ${PROC_DIR}
+
+# Stop frontend consumers
+if [ -f ${PID_FRONT_FILE} ] ; then
+    pids=$(cat ${PID_FRONT_FILE})
+    for pid in $(echo ${pids}) ; do
+        kill -9 ${pid} &> /dev/null
+    done
+    rm ${PID_FRONT_FILE}
+else
+    echo "File ${PID_FRONT_FILE} does not exists. Nothing to kill"
+fi
+
+# Stop backend consumers
+if [ -f ${PID_BACK_FILE} ] ; then
+    pids=$(cat ${PID_BACK_FILE})
+    for pid in $(echo ${pids}) ; do
+        kill -9 ${pid} &> /dev/null
+    done
+    rm ${PID_BACK_FILE}
+else
+    echo "File ${PID_BACK_FILE} does not exists. Nothing to kill"
+fi

@@ -78,8 +78,30 @@ class Action
      * @param mixed $default
      * @return mixed
      */
-    public function getProperty($key, $default = null)
+    public function &getProperty($key, $default = null)
     {
-        return $this->hasProperty($key) ? $this->properties[$key] : $default;
+        $value = $default;
+        if ($this->hasProperty($key)) {
+            $value = $this->properties[$key];
+        }
+        return $value;
+    }
+
+    /**
+     * @param string $key
+     */
+    public function removeProperty($key)
+    {
+        if ($this->hasProperty($key)) {
+            unset($this->properties[$key]);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return "[Action] name : '" . $this->name . "' ; content : " . json_encode($this->properties);
     }
 }

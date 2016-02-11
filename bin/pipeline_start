@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+COMPONENT_DIR="$(cd -P ${SCRIPT_DIR}/.. && pwd)"
+LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
+PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+PID_FRONT_FILE="${PROC_DIR}/front.pid"
+PID_BACK_FILE="${PROC_DIR}/back.pid"
+
+test -d ${LOG_DIR} || mkdir -p ${LOG_DIR}
+test -d ${PROC_DIR} || mkdir -p ${PROC_DIR}
+
+if [ -f ${PID_FRONT_FILE} ] ; then
+    >2& echo "Pids File ${PID_FRONT_FILE} already exists. Process is probably already running. Can't continue"
+    exit 1;
+fi
+
+# Start frontend consumers
+frontendConsumers=$(php ${COMPONENT_DIR}/app/console pipeline:frontend:list)
+frontendConsumersPids=""
+for frontendConsumer in $(echo ${frontendConsumers}) ; do
+    echo "starting consumer for ${frontendConsumer} event"
+    php ${COMPONENT_DIR}/app/console rabbitmq:consumer -w ${frontendConsumer} >> ${LOG_DIR}/front 2>&1 &
+    frontendConsumersPids="${frontendConsumersPids} $!"
+done
+echo ${frontendConsumersPids} > ${PID_FRONT_FILE}
+
+# Start backend consumers
+if [ -z "$1" ] ; then
+    backendPipelineConsumerInstances=1;
+else
+    backendPipelineConsumerInstances=$1;
+fi
+
+echo "Launch ${backendPipelineConsumerInstances} instances of pipeline back consumer"
+backendConsumersPids=""
+for i in $(seq ${backendPipelineConsumerInstances}) ; do
+    php ${COMPONENT_DIR}/app/console rabbitmq:consumer -w pipeline_back >> ${LOG_DIR}/back 2>&1 &
+    backendConsumersPids="${backendConsumersPids} $!"
+done
+echo ${backendConsumersPids} > ${PID_BACK_FILE}

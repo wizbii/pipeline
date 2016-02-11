@@ -1,4 +1,4 @@
-wizbii_common_rest_api:
+pipeline_rest_api:
     path:             /api/pipeline
     defaults:
-        _controller:  wizbii.pipeline.rest.api.controller:getPipeline
+        _controller:  pipeline.controller.api:getPipeline

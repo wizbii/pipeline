@@ -6,7 +6,7 @@ use Wizbii\PipelineBundle\Factory\PipelineFactory;
 use Wizbii\PipelineBundle\Model\Action;
 use Wizbii\PipelineBundle\Model\ActionCreator;
 use Wizbii\PipelineBundle\Model\Store;
-use Wizbii\PipelineBundle\Service\Pipeline;
+use Wizbii\PipelineBundle\Model\Pipeline;
 use Wizbii\PipelineBundle\Tests\BaseTestCase;
 
 class PipelineFactoryTest extends BaseTestCase
@@ -73,7 +73,7 @@ class PipelineFactoryTest extends BaseTestCase
             "service" => "wizbii.pipeline.storeprofile_identity_card",
             "triggered_by_actions" => ["profile_anniversary", "profile_first_name_updated"],
             "triggered_by_stores" => ["profile_network"],
-            "triggered_events" => ["profile_identity_card_updated"],
+            "triggered_event" => "profile_identity_card_updated",
         ]);
 
         // check the number of created stores
@@ -90,8 +90,8 @@ class PipelineFactoryTest extends BaseTestCase
         $this->assertThat($store->isTriggeredByStore(new Store("profile_network")), $this->isTrue());
 
         // check the events that are triggered by this store
-        $this->assertThat(count($store->getTriggeredEvents()), $this->equalTo(1));
-        $this->assertThat($store->getTriggeredEvents()[0]->getName(), $this->equalTo("profile_identity_card_updated"));
+        $this->assertThat($store->hasTriggeredEvent(), $this->isTrue());
+        $this->assertThat($store->getTriggeredEvent()->getName(), $this->equalTo("profile_identity_card_updated"));
     }
 
     /**
@@ -106,7 +106,7 @@ class PipelineFactoryTest extends BaseTestCase
             "service" => "wizbii.pipeline.storeprofile_identity_card",
             "triggered_by_actions" => ["profile_anniversary", "profile_first_name_updated"],
             "triggered_by_stores" => ["profile_network"],
-            "triggered_events" => ["profile_identity_card_updated"],
+            "triggered_event" => "profile_identity_card_updated",
         ]);
     }
 
@@ -119,48 +119,7 @@ class PipelineFactoryTest extends BaseTestCase
         $pipeline = new Pipeline("wizbii_profile");
         $pipelineFactory = new PipelineFactory();
         $pipelineFactory->buildStore($pipeline, "profile_identity_card", [
-            "service" => "wizbii.pipeline.storeprofile_identity_card",
-            "triggered_events" => ["profile_identity_card_updated"],
+            "service" => "wizbii.pipeline.storeprofile_identity_card"
         ]);
-    }
-
-    /**
-     * @test
-     */
-    public function doesNotHaveCircularReferences()
-    {
-        $pipeline = new Pipeline("wizbii_profile");
-        $profileIdentityCardStore = new Store("profile_identity_card");
-        $profileNetworkStore = new Store("profile_network");
-        $profileThanxStore = new Store("profile_thanx");
-        $profileIdentityCardStore->addTriggeredByStore($profileNetworkStore);
-        $profileIdentityCardStore->addTriggeredByStore($profileThanxStore);
-        $pipeline->addStore($profileIdentityCardStore);
-        $pipeline->addStore($profileNetworkStore);
-        $pipeline->addStore($profileThanxStore);
-
-        $pipelineFactory = new PipelineFactory();
-        $pipelineFactory->checkForCircularReferences($pipeline);
-    }
-
-    /**
-     * @test
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
-    public function circularReferencesThrowsException()
-    {
-        $pipeline = new Pipeline("wizbii_profile");
-        $profileIdentityCardStore = new Store("profile_identity_card");
-        $profileNetworkStore = new Store("profile_network");
-        $profileThanxStore = new Store("profile_thanx");
-        $profileIdentityCardStore->addTriggeredByStore($profileNetworkStore);
-        $profileNetworkStore->addTriggeredByStore($profileThanxStore);
-        $profileThanxStore->addTriggeredByStore($profileIdentityCardStore);
-        $pipeline->addStore($profileIdentityCardStore);
-        $pipeline->addStore($profileNetworkStore);
-        $pipeline->addStore($profileThanxStore);
-
-        $pipelineFactory = new PipelineFactory();
-        $pipelineFactory->checkForCircularReferences($pipeline);
     }
 }

@@ -1,14 +1,16 @@
 <?php
 
-namespace Wizbii\PipelineBundle\Service;
+namespace Wizbii\PipelineBundle\Model;
 
-use Wizbii\PipelineBundle\Model\Action;
-use Wizbii\PipelineBundle\Model\ActionCreator;
-use Wizbii\PipelineBundle\Model\Event;
-use Wizbii\PipelineBundle\Model\Store;
+use Wizbii\PipelineBundle\Exception\CircularPipelineException;
 
 class Pipeline
 {
+    /**
+     * @var string
+     */
+    protected $name;
+
     /**
      * @var Action[]
      */
@@ -17,7 +19,12 @@ class Pipeline
     /**
      * @var Event[]
      */
-    protected $events = [];
+    protected $incomingEvents = [];
+
+    /**
+     * @var Event[]
+     */
+    protected $outgoingEvents = [];
 
     /**
      * @var ActionCreator[]
@@ -28,6 +35,34 @@ class Pipeline
      * @var Store[]
      */
     protected $stores = [];
+
+    /**
+     * @throws CircularPipelineException
+     */
+    public function checkForCircularReferences()
+    {
+        foreach ($this->stores as $storeName => $store) {
+            if ($store->dependsOnStore($store)) {
+                throw new CircularPipelineException("Store $storeName depends on itself");
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
     /**
      * @return Action[]
@@ -74,43 +109,85 @@ class Pipeline
     /**
      * @return Event[]
      */
-    public function getEvents()
+    public function getIncomingEvents()
     {
-        return $this->events;
+        return $this->incomingEvents;
     }
 
     /**
-     * @param Event[] $events
+     * @param Event[] $incomingEvents
      */
-    public function setEvents($events)
+    public function setIncomingEvents($incomingEvents)
     {
-        $this->events = $events;
+        $this->incomingEvents = $incomingEvents;
     }
 
     /**
      * @param Event $event
      */
-    public function addEvent($event)
+    public function addIncomingEvent($event)
     {
-        $this->events[$event->getName()] = $event;
+        $this->incomingEvents[$event->getName()] = $event;
     }
 
     /**
      * @param string $name
      * @return Event
      */
-    public function getEvent($name)
+    public function getIncomingEvent($name)
     {
-        return $this->hasEvent($name) ? $this->events[$name] : null;
+        return $this->hasIncomingEvent($name) ? $this->incomingEvents[$name] : null;
     }
 
     /**
      * @param string $name
      * @return bool
      */
-    public function hasEvent($name)
+    public function hasIncomingEvent($name)
     {
-        return is_array($this->events) && array_key_exists($name, $this->events);
+        return is_array($this->incomingEvents) && array_key_exists($name, $this->incomingEvents);
+    }
+
+    /**
+     * @return Event[]
+     */
+    public function getOutgoingEvents()
+    {
+        return $this->outgoingEvents;
+    }
+
+    /**
+     * @param Event[] $outgoingEvents
+     */
+    public function setOutgoingEvents($outgoingEvents)
+    {
+        $this->outgoingEvents = $outgoingEvents;
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function addOutgoingEvent($event)
+    {
+        $this->outgoingEvents[$event->getName()] = $event;
+    }
+
+    /**
+     * @param string $name
+     * @return Event
+     */
+    public function getOutgoingEvent($name)
+    {
+        return $this->hasOutgoingEvent($name) ? $this->outgoingEvents[$name] : null;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasOutgoingEvent($name)
+    {
+        return is_array($this->outgoingEvents) && array_key_exists($name, $this->outgoingEvents);
     }
 
     /**
