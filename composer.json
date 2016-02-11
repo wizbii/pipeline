@@ -1,5 +1,6 @@
 {
     "name": "wizbii/pipeline",
+    "bin": ["bin/pipeline_start", "bin/pipeline_stop"],
     "autoload": {
         "psr-4": { "Wizbii\\PipelineBundle\\": ""}
     },
