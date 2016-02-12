@@ -59,7 +59,7 @@ abstract class DispatcherStore extends BaseStore
             $this->runExecutor($executor, $action, $eventsConfig);
         }
         foreach ($this->actionMatchers as $actionMatcher) {
-            if (false && $actionMatcher->matches($action)) {
+            if ($actionMatcher->matches($action)) {
                 $hasMatched = true;
                 foreach ($actionMatcher->getExecutors() as $executor) {
                     $this->runExecutor($executor, $action, $eventsConfig);
