@@ -6,7 +6,7 @@ class LessThanOrEquals implements Matcher
 {
     public function matches($value)
     {
-        return $this->maxValue <= $value;
+        return $this->maxValue >= $value;
     }
 
     /**
@@ -16,7 +16,7 @@ class LessThanOrEquals implements Matcher
 
     /**
      * ContainsKeys constructor.
-     * @param array $maxValue
+     * @param mixed $maxValue
      */
     public function __construct($maxValue)
     {

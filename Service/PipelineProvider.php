@@ -15,13 +15,23 @@ class PipelineProvider
     }
 
     /**
+     * @param Pipeline $pipeline
+     */
+    public function setPipeline($pipeline)
+    {
+        $this->pipeline = $pipeline;
+    }
+
+    /**
      * PipelineProvider constructor.
      * @param array $pipelineConfiguration
      */
-    public function __construct($pipelineConfiguration)
+    public function __construct($pipelineConfiguration = null)
     {
         $pipelineFactory = new PipelineFactory();
-        $this->pipeline = $pipelineFactory->buildPipeline($pipelineConfiguration);
+        if (isset($pipelineConfiguration)) {
+            $this->pipeline = $pipelineFactory->buildPipeline($pipelineConfiguration);
+        }
     }
 
     /**

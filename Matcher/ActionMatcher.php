@@ -33,19 +33,27 @@ class ActionMatcher
      */
     protected $currentMatcher;
 
+    /**
+     * @return AndMatcher
+     */
     public function addMatcherOnActionName()
     {
         $this->currentMatcher = AndMatcher::build();
         $this->matchersOnActionName[] = $this->currentMatcher;
+
+        return $this->currentMatcher;
     }
 
     /**
      * @param string $propertyName
+     * @return AndMatcher
      */
     public function addMatcherOnPropertyName($propertyName)
     {
         $this->currentMatcher = AndMatcher::build();
         $this->matchersOnPropertyName[$propertyName] = $this->currentMatcher;
+
+        return $this->currentMatcher;
     }
 
     /**

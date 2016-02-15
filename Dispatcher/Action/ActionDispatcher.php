@@ -20,11 +20,11 @@ class ActionDispatcher implements ActionDispatcherInterface
      */
     public function dispatch($action)
     {
-        echo "[ActionDispatcher] Going to dispatch action " . $action->getName() . " whose content is : " . json_encode($action->getProperties()) . "\n";
+        $this->logger->debug("[ActionDispatcher] Going to dispatch action " . $action->getName() . " whose content is : " . json_encode($action->getProperties()));
         $success = true;
         foreach ($this->pipelineProvider->getCurrentPipeline()->getStores() as $store) {
             if ($store->isTriggeredByAction($action)) {
-                echo "  -> store " . $store->getName() . " is triggered by action " . $action->getName() . "\n";
+                $this->logger->info("  -> store " . $store->getName() . " is triggered by action " . $action->getName());
                 try {
                     $this->runStore($store, $action);
                 }
@@ -32,9 +32,6 @@ class ActionDispatcher implements ActionDispatcherInterface
                     $this->logger->error("Can't dispatch action '" . $action->getName() . "'. Message was : " . $e->getMessage());
                     $success = false;
                 }
-            }
-            else {
-                //echo "  -> store " . $store->getName() . " is not triggered by action " . $action->getName() . "\n";
             }
         }
 
@@ -48,7 +45,7 @@ class ActionDispatcher implements ActionDispatcherInterface
      */
     protected function runStore($store, $action)
     {
-        echo "    -> going to run store " . $store->getName() . "\n";
+        $this->logger->debug("    -> going to run store " . $store->getName());
         $runner = $this->container->get($store->getService(), ContainerInterface::NULL_ON_INVALID_REFERENCE);
         if (!isset($runner)) {
             throw new StoreNotRunnableException("Store " . $store->getName() . " is not runnable : service with name '" . $store->getService() . "' does not exist'");
