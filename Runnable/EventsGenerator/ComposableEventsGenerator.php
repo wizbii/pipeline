@@ -7,7 +7,11 @@ class ComposableEventsGenerator implements EventsGenerator
     public function produce()
     {
         foreach ($this->eventsGenerators as $eventsGenerator) {
-            $eventsGenerator->produce();
+            if ($eventsGenerator instanceof NullEventsGenerator) continue;
+
+            foreach ($eventsGenerator->produce() as $product) {
+                yield $product;
+            }
         }
     }
 
