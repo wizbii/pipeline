@@ -3,13 +3,13 @@
 namespace Wizbii\PipelineBundle\Runnable;
 
 use Wizbii\PipelineBundle\Model\Action;
-use Wizbii\PipelineBundle\Model\DataBag;
+use Wizbii\PipelineBundle\Runnable\EventsGenerator\EventsGenerator;
 
 interface StoreInterface
 {
     /**
      * @param Action $action
-     * @return DataBag[]
+     * @return EventsGenerator
      */
     public function run($action);
 

@@ -4,7 +4,6 @@ namespace Wizbii\PipelineBundle\Runnable;
 
 use Wizbii\PipelineBundle\Exception\StoreNotRunnableException;
 use Wizbii\PipelineBundle\Matcher\ActionMatcher;
-use Wizbii\PipelineBundle\Matcher\Base\AndMatcher;
 use Wizbii\PipelineBundle\Matcher\Base\CallableMatcher;
 use Wizbii\PipelineBundle\Matcher\Base\ContainsKeys;
 use Wizbii\PipelineBundle\Matcher\Base\EmptyMatcher;
@@ -17,6 +16,10 @@ use Wizbii\PipelineBundle\Matcher\Base\Matcher;
 use Wizbii\PipelineBundle\Matcher\Base\Not;
 use Wizbii\PipelineBundle\Model\Action;
 use Wizbii\PipelineBundle\Model\DataBag;
+use Wizbii\PipelineBundle\Runnable\EventsGenerator\CollectionEventsGenerator;
+use Wizbii\PipelineBundle\Runnable\EventsGenerator\ComposableEventsGenerator;
+use Wizbii\PipelineBundle\Runnable\EventsGenerator\EventsGenerator;
+use Wizbii\PipelineBundle\Runnable\EventsGenerator\NullEventsGenerator;
 
 abstract class DispatcherStore extends BaseStore
 {
@@ -53,43 +56,47 @@ abstract class DispatcherStore extends BaseStore
      */
     public function run($action)
     {
-        $eventsConfig = [];
+        $composableEventsGenerator = new ComposableEventsGenerator();
         $hasMatched = false;
         foreach ($this->beforeDispatchExecutors as $executor) {
-            $this->runExecutor($executor, $action, $eventsConfig);
+            $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
         }
         foreach ($this->actionMatchers as $actionMatcher) {
             if ($actionMatcher->matches($action)) {
                 $hasMatched = true;
                 foreach ($actionMatcher->getExecutors() as $executor) {
-                    $this->runExecutor($executor, $action, $eventsConfig);
+                    $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
                 }
             }
         }
         foreach ($this->afterDispatchExecutors as $executor) {
-            $this->runExecutor($executor, $action, $eventsConfig);
+            $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
         }
 
         if (!$hasMatched) {
-            $eventsConfig = $this->onDispatchFailure($action);
+            return $this->onDispatchFailure($action);
         }
 
-        return $eventsConfig;
+        return $composableEventsGenerator;
     }
 
     /**
      * @param callable $executor
      * @param Action $action
-     * @param DataBag[] $eventsConfig
+     * @return EventsGenerator
      */
-    protected function runExecutor($executor, $action, &$eventsConfig)
+    protected function runExecutor($executor, $action)
     {
-        $e = call_user_func_array($executor, [$action]);
+        $eventsGenerator = call_user_func_array($executor, [$action]);
         // aggregate eventsConfig
-        if (isset($e)) {
-            $e = is_array($e) ? $e : [$e];
-            $eventsConfig = array_merge($eventsConfig, $e);
+        if (isset($eventsGenerator)) {
+            if (! $eventsGenerator instanceof EventsGenerator) {
+                $eventsGenerator = new CollectionEventsGenerator(is_array($eventsGenerator) ? $eventsGenerator : [$eventsGenerator]);
+            }
+            return $eventsGenerator;
         }
+
+        return new NullEventsGenerator();
     }
 
     /**
@@ -100,7 +107,7 @@ abstract class DispatcherStore extends BaseStore
     /**
      * Let store decide what to do when the dispatch process failed
      * @param Action $action
-     * @return DataBag[]
+     * @return EventsGenerator
      * @throws StoreNotRunnableException
      */
     public function onDispatchFailure($action)

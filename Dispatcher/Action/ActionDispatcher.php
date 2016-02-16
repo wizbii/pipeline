@@ -55,11 +55,10 @@ class ActionDispatcher implements ActionDispatcherInterface
         }
 
         try {
-            $eventsData = $runner->run($action);
-            if ($store->hasTriggeredEvent() && isset($eventsData)) {
-                if ($eventsData instanceof DataBag) $eventsData = [$eventsData];
-                foreach ($eventsData as $eventData) {
-                    $this->eventDispatcher->dispatch($store->getTriggeredEvent()->getName(), $eventData->all());
+            $eventsGenerator = $runner->run($action);
+            if ($store->hasTriggeredEvent() && isset($eventsGenerator)) {
+                foreach ($eventsGenerator->produce() as $dataBag) {
+                    $this->eventDispatcher->dispatch($store->getTriggeredEvent()->getName(), $dataBag->all());
                 }
             }
         }
