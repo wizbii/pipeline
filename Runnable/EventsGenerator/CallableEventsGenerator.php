@@ -6,7 +6,7 @@ class CallableEventsGenerator implements EventsGenerator
 {
     public function produce()
     {
-        call_user_func_array($this->callable, []);
+        return call_user_func_array($this->callable, []);
     }
 
     /**
