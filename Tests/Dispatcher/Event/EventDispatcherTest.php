@@ -27,7 +27,7 @@ class EventDispatcherTest extends BaseTestCase
      */
     public function dispatch()
     {
-        $producer = $this->getMock('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface');
+        $producer = $this->getMockBuilder('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface')->setMethods(["publish"])->getMock();
         $producer->expects($this->once())->method("publish");
         $this->eventDispatcher->producers->set("profile_created", $producer);
 
