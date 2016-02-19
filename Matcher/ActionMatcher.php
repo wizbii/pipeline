@@ -26,7 +26,7 @@ class ActionMatcher
     /**
      * @var callable[]
      */
-    protected $executors;
+    protected $executors = [];
 
     /**
      * @var AndMatcher
