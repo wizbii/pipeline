@@ -58,19 +58,27 @@ abstract class DispatcherStore extends BaseStore
     {
         $composableEventsGenerator = new ComposableEventsGenerator();
         $hasMatched = false;
-        foreach ($this->beforeDispatchExecutors as $executor) {
-            $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
-        }
+
         foreach ($this->actionMatchers as $actionMatcher) {
             if ($actionMatcher->matches($action)) {
-                $hasMatched = true;
+                if (!$hasMatched) {
+                    foreach ($this->beforeDispatchExecutors as $executor) {
+                        $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
+                    }
+                }
+
                 foreach ($actionMatcher->getExecutors() as $executor) {
                     $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
                 }
+
+                if (!$hasMatched) {
+                    foreach ($this->afterDispatchExecutors as $executor) {
+                        $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
+                    }
+                }
+
+                $hasMatched = true;
             }
-        }
-        foreach ($this->afterDispatchExecutors as $executor) {
-            $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
         }
 
         if (!$hasMatched) {
