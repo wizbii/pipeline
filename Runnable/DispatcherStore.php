@@ -113,6 +113,17 @@ abstract class DispatcherStore extends BaseStore
     protected abstract function configure();
 
     /**
+     * This method should only be called for tests purposes (helps handling callbacks towards mocked dependencies)
+     */
+    final public function reConfigure()
+    {
+        $this->actionMatchers = [];
+        $this->beforeDispatchExecutors = [];
+        $this->afterDispatchExecutors = [];
+        $this->configure();
+    }
+
+    /**
      * Let store decide what to do when the dispatch process failed
      * @param Action $action
      * @return EventsGenerator
