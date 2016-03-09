@@ -34,3 +34,4 @@ services:
         properties:
             pipelineProvider: '@pipeline.provider'
             actionDispatcher: '@pipeline.dispatcher.action'
+            logger: '@monolog.logger.pipeline'
