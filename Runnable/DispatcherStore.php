@@ -224,7 +224,7 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * @param mixed $acceptedValues
+     * @param array $acceptedValues
      * @return $this
      */
     public function in($acceptedValues)
