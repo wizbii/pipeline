@@ -55,7 +55,10 @@ class ActionDispatcher implements ActionDispatcherInterface
         }
 
         try {
+            $start = microtime(true);
             $eventsGenerator = $runner->run($action);
+            $stop = microtime(true);
+            echo "[" . getmypid() . "]" . " Service " . $store->getService() . " tooked " . ($stop - $start) . " to process " . $action->getName() . "\n";
             if ($store->hasTriggeredEvent() && isset($eventsGenerator)) {
                 foreach ($eventsGenerator->produce() as $dataBag) {
                     $this->eventDispatcher->dispatch($store->getTriggeredEvent()->getName(), $dataBag->all());
