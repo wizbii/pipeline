@@ -39,6 +39,11 @@ abstract class DispatcherStore extends BaseStore
     protected $afterDispatchExecutors = [];
 
     /**
+     * @var callable[]
+     */
+    protected $dispatchFailureExecutors = [];
+
+    /**
      * DispatcherStore constructor.
      */
     public function __construct()
@@ -82,7 +87,9 @@ abstract class DispatcherStore extends BaseStore
         }
 
         if (!$hasMatched) {
-            return $this->onDispatchFailure($action);
+            foreach ($this->dispatchFailureExecutors as $executor) {
+                $composableEventsGenerator->addEventsGenerator($this->runExecutor($executor, $action));
+            }
         }
 
         return $composableEventsGenerator;
@@ -152,6 +159,17 @@ abstract class DispatcherStore extends BaseStore
     public function executeAfterDispatch($callable)
     {
         $this->afterDispatchExecutors[] = $this->buildExecutor($callable);
+
+        return $this;
+    }
+
+    /**
+     * @param callable $callable
+     * @return $this
+     */
+    public function executeOnDispatchFailure($callable)
+    {
+        $this->dispatchFailureExecutors[] = $this->buildExecutor($callable);
 
         return $this;
     }
