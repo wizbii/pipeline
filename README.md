@@ -12,7 +12,7 @@ We use Pipeline at Wizbii in conjunction with our CQRS approach to deal with our
 
 The architecture is broken into several actors :
    * *Event* : an Event is thrown to or catched from a Messaging system like RabbitMQ, HornetQ, ... I contains only a few information since it is send over the network. For simplicity and consistency, Events are not persisted like in most Event Sourcing solutions
-   * *Action* : an Action is the internal representation of an Event. It is send by the Dispatcher the registered stores. Since an Action is only living in memory, it can contain more information than a simple Event. Actions are created after an Event ash been catched.
+   * *Action* : an Action is the internal representation of an Event. It is send by the Dispatcher the registered stores. Since an Action is only living in memory, it can contain more information than a simple Event. Actions are created after an Event has been catched.
    * *Store* : a Store is accountable for managing a Projection. Each store is registered to run after an Action has been created or after another Store has finished its task. In a Symfony world, a Store is implemented by a service
 
 # Installation
