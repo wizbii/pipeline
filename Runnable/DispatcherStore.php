@@ -142,6 +142,15 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
+     * USed for debug purposes mainly
+     * @param Action $action
+     */
+    public function dumpAction($action)
+    {
+        echo "Action '" . $action->getName() . "'' : " . var_export($action->getProperties(), true) . "\n";
+    }
+
+    /**
      * @param callable $callable
      * @return $this
      */
