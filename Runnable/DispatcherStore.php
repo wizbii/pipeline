@@ -147,7 +147,7 @@ abstract class DispatcherStore extends BaseStore
      */
     public function dumpAction($action)
     {
-        echo "Action '" . $action->getName() . "'' : " . var_export($action->getProperties(), true) . "\n";
+        echo "Action '" . $action->getName() . "' : " . var_export($action->getProperties(), true) . "\n";
     }
 
     /**
