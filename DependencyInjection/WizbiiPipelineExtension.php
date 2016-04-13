@@ -127,7 +127,28 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
      */
     public function prepend(ContainerBuilder $container)
     {
-        $container->prependExtensionConfig("monolog", ["channel" => ["pipeline"]]);
+        $container->prependExtensionConfig("monolog", [
+            "channel" => [
+                "pipeline", "pipeline_action_dispatcher"
+            ],
+            "handlers" => [
+                "pipeline_action_dispatcher" => [
+                    "type"      => "stream",
+                    "level"     => "info",
+                    "path"      => $container->getParameter("kernel.logs_dir") . '/pipeline_action_dispatcher.log',
+                    "channels"  => "pipeline_action_dispatcher",
+                    "formatter" => "wizbii.monolog.formatter.raw"
+                ],
+                "pipeline" => [
+                    "type"      => "stream",
+                    "level"     => "error",
+                    "path"      => $container->getParameter("kernel.logs_dir") . '/pipeline.log',
+                    "channels"  => "pipeline",
+                    "formatter" => "wizbii.monolog.formatter.raw"
+                ]
+            ]
+        ]);
+
     }
 
     /**

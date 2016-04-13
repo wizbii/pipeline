@@ -24,7 +24,7 @@ class ActionDispatcher implements ActionDispatcherInterface
         $success = true;
         foreach ($this->pipelineProvider->getCurrentPipeline()->getStores() as $store) {
             if ($store->isTriggeredByAction($action)) {
-                $this->logger->info("  -> store " . $store->getName() . " is triggered by action " . $action->getName());
+                $this->logger->debug("  -> store " . $store->getName() . " is triggered by action " . $action->getName());
                 try {
                     $this->runStore($store, $action);
                 }
@@ -58,7 +58,7 @@ class ActionDispatcher implements ActionDispatcherInterface
             $start = microtime(true);
             $eventsGenerator = $runner->run($action);
             $stop = microtime(true);
-            echo "[" . getmypid() . "]" . " Service " . $store->getService() . " tooked " . ($stop - $start) . " to process " . $action->getName() . "\n";
+            $this->logger->info("[" . getmypid() . "]" . " Service " . $store->getService() . " tooked " . ($stop - $start) . " to process " . $action->getName());
             if ($store->hasTriggeredEvent() && isset($eventsGenerator)) {
                 foreach ($eventsGenerator->produce() as $dataBag) {
                     $this->eventDispatcher->dispatch($store->getTriggeredEvent()->getName(), $dataBag->all());

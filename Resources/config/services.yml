@@ -26,7 +26,7 @@ services:
         properties:
             pipelineProvider: '@pipeline.provider'
             container: '@service_container'
-            logger: '@monolog.logger.pipeline'
+            logger: '@monolog.logger.pipeline_action_dispatcher'
             eventDispatcher: '@pipeline.dispatcher.event'
 
     pipeline.consumer.back:
