@@ -63,7 +63,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             $frontConsumerId = sprintf('pipeline.consumer.front.%s_consumer', $event->getName());
             $this->container->setDefinition($frontConsumerId, $frontConsumerDefinition);
 
-            $amqpConsumer = new Definition('%old_sound_rabbit_mq.consumer.class%');
+            $amqpConsumer = new Definition('%pipeline.consumer.command.class%');
             $amqpConsumer
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.consumer')

@@ -1,6 +1,7 @@
 parameters:
     pipeline.consumer.front.class: 'Wizbii\PipelineBundle\Consumer\FrontConsumer'
     pipeline.producer.class: 'Wizbii\PipelineBundle\Producer\Producer'
+    pipeline.consumer.command.class: 'Wizbii\PipelineBundle\Consumer\CommandConsumer'
 
 services:
     pipeline.controller.api:
