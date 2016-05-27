@@ -2,6 +2,7 @@ parameters:
     pipeline.consumer.front.class: 'Wizbii\PipelineBundle\Consumer\FrontConsumer'
     pipeline.producer.class: 'Wizbii\PipelineBundle\Producer\Producer'
     pipeline.consumer.command.class: 'Wizbii\PipelineBundle\Consumer\CommandConsumer'
+    pipeline.dispatcher.action.class: 'Wizbii\PipelineBundle\Dispatcher\Action\ActionDispatcher'
 
 services:
     pipeline.controller.api:
@@ -23,7 +24,7 @@ services:
             logger: '@monolog.logger.pipeline'
 
     pipeline.dispatcher.action:
-        class: 'Wizbii\PipelineBundle\Dispatcher\Action\ActionDispatcher'
+        class: '%pipeline.dispatcher.action.class%'
         properties:
             pipelineProvider: '@pipeline.provider'
             container: '@service_container'
