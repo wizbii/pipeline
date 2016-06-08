@@ -2,3 +2,4 @@ pipeline_rest_api:
     path:             /api/pipeline
     defaults:
         _controller:  pipeline.controller.api:getPipeline
+        _format: json
