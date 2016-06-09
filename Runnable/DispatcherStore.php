@@ -142,12 +142,27 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * USed for debug purposes mainly
-     * @param Action $action
+     * Used for debug purposes mainly
+     * @return $this
      */
-    public function dumpAction($action)
+    public function dumpAction()
     {
-        echo "Action '" . $action->getName() . "' : " . var_export($action->getProperties(), true) . "\n";
+        return $this->newActionMatcher()->thenExecute(function($action) {
+            echo "Action '" . $action->getName() . "' : " . var_export($action->getProperties(), true) . "\n";
+        });
+    }
+
+    /**
+     * @param string $from
+     * @param string $to
+     * @return $this
+     */
+    public function copyProperty($from, $to)
+    {
+        return $this->thenExecute(function($action) use ($from, $to) {
+            /** @var Action $action */
+            $action->addProperty($to, $action->getProperty($from));
+        });
     }
 
     /**
