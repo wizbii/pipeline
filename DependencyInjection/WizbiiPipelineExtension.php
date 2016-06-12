@@ -70,6 +70,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
                 ->addTag('pipeline.front.consumer')
                 ->addMethodCall('setExchangeOptions', [["name" => $event->getName(), "type" => "direct"]])
                 ->addMethodCall('setQueueOptions', [["name" => $event->getName()]])
+                ->addMethodCall('setQosOptions', ["prefetch_count" => 1000])
                 ->addMethodCall('setCallback', [[new Reference($frontConsumerId), "execute"]])
                 ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
             $name = sprintf('old_sound_rabbit_mq.%s_consumer', $event->getName());
