@@ -37,3 +37,11 @@ services:
             pipelineProvider: '@pipeline.provider'
             actionDispatcher: '@pipeline.dispatcher.action'
             logger: '@monolog.logger.pipeline'
+
+    wizbii.monolog.formatter.raw:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            - "[%%datetime%%] %%level_name%%: %%message%%\n"
+            - null
+            - true
+            - true
