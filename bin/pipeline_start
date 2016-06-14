@@ -11,7 +11,7 @@ test -d ${LOG_DIR} || mkdir -p ${LOG_DIR}
 test -d ${PROC_DIR} || mkdir -p ${PROC_DIR}
 
 if [ -f ${PID_FRONT_FILE} ] ; then
-    >2& echo "Pids File ${PID_FRONT_FILE} already exists. Process is probably already running. Can't continue"
+    >&2 echo "Pids File ${PID_FRONT_FILE} already exists. Process is probably already running. Can't continue"
     exit 1;
 fi
 
