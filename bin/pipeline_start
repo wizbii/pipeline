@@ -2,8 +2,19 @@
 
 SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 COMPONENT_DIR="$(cd -P ${SCRIPT_DIR}/.. && pwd)"
-LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
-PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+
+if [ -d ${COMPONENT_DIR}/app/console ] ; then
+    # Symfony 2 directory structure
+    CONSOLE_PATH=${COMPONENT_DIR}/app/console
+    LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
+    PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+else
+    # Symfony 3 directory structure
+    CONSOLE_PATH=${COMPONENT_DIR}/bin/console
+    LOG_DIR="${COMPONENT_DIR}/var/logs/consumers"
+    PROC_DIR="${COMPONENT_DIR}/var/proc/consumers"
+fi
+
 PID_FRONT_FILE="${PROC_DIR}/front.pid"
 PID_BACK_FILE="${PROC_DIR}/back.pid"
 
@@ -16,11 +27,11 @@ if [ -f ${PID_FRONT_FILE} ] ; then
 fi
 
 # Start frontend consumers
-frontendConsumers=$(php ${COMPONENT_DIR}/app/console pipeline:frontend:list)
+frontendConsumers=$(php ${CONSOLE_PATH} pipeline:frontend:list)
 frontendConsumersPids=""
 for frontendConsumer in $(echo ${frontendConsumers}) ; do
     echo "starting consumer for ${frontendConsumer} event"
-    php ${COMPONENT_DIR}/app/console rabbitmq:consumer -w ${frontendConsumer} >> ${LOG_DIR}/front 2>&1 &
+    php ${CONSOLE_PATH} rabbitmq:consumer -w ${frontendConsumer} >> ${LOG_DIR}/front 2>&1 &
     frontendConsumersPids="${frontendConsumersPids} $!"
 done
 echo ${frontendConsumersPids} > ${PID_FRONT_FILE}
@@ -35,7 +46,7 @@ fi
 echo "Launch ${backendPipelineConsumerInstances} instances of pipeline back consumer"
 backendConsumersPids=""
 for i in $(seq ${backendPipelineConsumerInstances}) ; do
-    php ${COMPONENT_DIR}/app/console rabbitmq:consumer -w pipeline_back >> ${LOG_DIR}/back 2>&1 &
+    php ${CONSOLE_PATH} rabbitmq:consumer -w pipeline_back >> ${LOG_DIR}/back 2>&1 &
     backendConsumersPids="${backendConsumersPids} $!"
 done
 echo ${backendConsumersPids} > ${PID_BACK_FILE}

@@ -2,8 +2,17 @@
 
 SCRIPT_DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 COMPONENT_DIR="$(cd -P ${SCRIPT_DIR}/.. && pwd)"
-LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
-PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+
+if [ -d ${COMPONENT_DIR}/app/console ] ; then
+    # Symfony 2 directory structure
+    LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
+    PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
+else
+    # Symfony 3 directory structure
+    LOG_DIR="${COMPONENT_DIR}/var/logs/consumers"
+    PROC_DIR="${COMPONENT_DIR}/var/proc/consumers"
+fi
+
 PID_FRONT_FILE="${PROC_DIR}/front.pid"
 PID_BACK_FILE="${PROC_DIR}/back.pid"
 
