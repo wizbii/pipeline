@@ -5,15 +5,12 @@ COMPONENT_DIR="$(cd -P ${SCRIPT_DIR}/.. && pwd)"
 
 if [ -f ${COMPONENT_DIR}/app/console ] ; then
     # Symfony 2 directory structure
-    echo 'SF2'
-
     CONSOLE_PATH=${COMPONENT_DIR}/app/console
     LOG_DIR="${COMPONENT_DIR}/app/logs/consumers"
     PROC_DIR="${COMPONENT_DIR}/app/proc/consumers"
 
     echo $PROC_DIR
 else
-    echo 'SF3'
     # Symfony 3 directory structure
     CONSOLE_PATH=${COMPONENT_DIR}/bin/console
     LOG_DIR="${COMPONENT_DIR}/var/logs/consumers"
