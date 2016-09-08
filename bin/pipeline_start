@@ -51,6 +51,6 @@ for i in $(seq ${backendPipelineConsumerInstances}) ; do
 done
 echo ${backendConsumersPids} > ${PID_BACK_FILE}
 
-if [ -n ${WAIT} ] ; then
+if [ -n "${WAIT}" ] ; then
     wait
 fi
