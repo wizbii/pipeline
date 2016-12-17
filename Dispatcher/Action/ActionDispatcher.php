@@ -34,7 +34,7 @@ class ActionDispatcher implements ActionDispatcherInterface
                     $success = false;
                 }
                 catch (\Throwable $e) {
-                    $this->logger->critical(
+                    $this->logger->critical("\n" . 
                         "   An error has been catched while dispatching action " . $action->getName() . "\n" .
                         "   Action parameters were : " . json_encode($action->getProperties()) . "\n" .
                         "   Error message is '" . $e->getMessage() . "'\n" .
