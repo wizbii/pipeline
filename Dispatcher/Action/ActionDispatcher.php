@@ -17,6 +17,7 @@ class ActionDispatcher implements ActionDispatcherInterface
     /**
      * @param Action $action
      * @return bool
+     * @throws \Throwable
      */
     public function dispatch($action)
     {
@@ -31,6 +32,17 @@ class ActionDispatcher implements ActionDispatcherInterface
                 catch (StoreNotRunnableException $e) {
                     $this->logger->error("Can't dispatch action '" . $action->getName() . "'. Message was : " . $e->getMessage());
                     $success = false;
+                }
+                catch (\Throwable $e) {
+                    $this->logger->critical(
+                        "   An error has been catched while dispatching action " . $action->getName() . "\n" .
+                        "   Action parameters were : " . json_encode($action->getProperties()) . "\n" .
+                        "   Error message is '" . $e->getMessage() . "'\n" .
+                        "   It occured on file " . $e->getFile() . " at line " . $e->getLine() . "\n" .
+                        "   Action will be requeued" . "\n" .
+                        "====================================================================================="
+                    );
+                    throw $e;
                 }
             }
         }
