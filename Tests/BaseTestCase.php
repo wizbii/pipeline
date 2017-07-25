@@ -2,7 +2,9 @@
 
 namespace Wizbii\PipelineBundle\Tests;
 
-class BaseTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class BaseTestCase extends TestCase
 {
 
 }

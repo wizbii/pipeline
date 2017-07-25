@@ -127,6 +127,7 @@ class PipelineTest extends BaseTestCase
         $pipeline->addStore($profileThanxStore);
 
         $pipeline->checkForCircularReferences();
+        $this->assertTrue(true);
     }
 
     /**

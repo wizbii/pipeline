@@ -40,7 +40,7 @@ class EventDispatcherTest extends BaseTestCase
      */
     public function unsupportedEvent()
     {
-        $producer = $this->getMock('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface');
+        $producer = $this->createMock('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface');
         $producer->expects($this->never())->method("publish");
         $this->eventDispatcher->producers->set("profile_created", $producer);
 

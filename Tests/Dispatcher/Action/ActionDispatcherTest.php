@@ -34,7 +34,7 @@ class ActionDispatcherTest extends BaseTestCase
     public function dispatch()
     {
         // init container
-        $runnableStore = $this->getMock('Wizbii\PipelineBundle\Runnable\StoreInterface');
+        $runnableStore = $this->createMock('Wizbii\PipelineBundle\Runnable\StoreInterface');
         $runnableStore->expects($this->once())->method("run");
         $container = new Container();
         $container->set("pipeline.store.profile.dashboard", $runnableStore);
