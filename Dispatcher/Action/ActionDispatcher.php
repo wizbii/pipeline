@@ -34,11 +34,17 @@ class ActionDispatcher implements ActionDispatcherInterface
                     $success = false;
                 }
                 catch (\Throwable $e) {
+                    $trace = "";
+                    foreach ($e->getTrace() as $item) {
+                        $trace .= "\n" . $item["file"] . ":" . $item["line"];
+                    }
+
                     $this->logger->critical("\n" . 
                         "   An error has been catched while dispatching action " . $action->getName() . "\n" .
                         "   Action parameters were : " . json_encode($action->getProperties()) . "\n" .
                         "   Error message is '" . $e->getMessage() . "'\n" .
                         "   It occured on file " . $e->getFile() . " at line " . $e->getLine() . "\n" .
+                        "   Trace is  : $trace\n" .
                         "   Action will be requeued" . "\n" .
                         "====================================================================================="
                     );
