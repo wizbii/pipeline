@@ -36,7 +36,9 @@ class ActionDispatcher implements ActionDispatcherInterface
                 catch (\Throwable $e) {
                     $trace = "";
                     foreach ($e->getTrace() as $item) {
-                        $trace .= "\n" . $item["file"] . ":" . $item["line"];
+                        if (array_key_exists("file", $item) && array_key_exists("line", $item)) {
+                            $trace .= "\n" . $item["file"] . ":" . $item["line"];
+                        }
                     }
 
                     $this->logger->critical("\n" . 

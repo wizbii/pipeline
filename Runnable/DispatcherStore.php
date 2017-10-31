@@ -44,6 +44,11 @@ abstract class DispatcherStore extends BaseStore
     protected $dispatchFailureExecutors = [];
 
     /**
+     * @var callable[]
+     */
+    protected $guards = [];
+
+    /**
      * DispatcherStore constructor.
      */
     public function __construct()
@@ -62,6 +67,15 @@ abstract class DispatcherStore extends BaseStore
     public function run($action)
     {
         $composableEventsGenerator = new ComposableEventsGenerator();
+
+        foreach ($this->guards as $guardName => $guard) {
+            if (!call_user_func_array($guard, [$action])) {
+                // stop execution
+                echo "Store '" . $this->getName() . "' has been stopped due to guard '$guardName'\n";
+                return $composableEventsGenerator;
+            }
+        }
+
         $hasMatched = false;
 
         foreach ($this->actionMatchers as $actionMatcher) {
@@ -153,6 +167,19 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
+     * @param int $percentage
+     * @return $this
+     */
+    public function setRunPercentage($percentage)
+    {
+        $this->executeOnlyIf("percentage", function() use ($percentage) {
+            return mt_rand(1, 100) <= $percentage;
+        });
+
+        return $this;
+    }
+
+    /**
      * @param string $from
      * @param string $to
      * @return $this
@@ -163,6 +190,18 @@ abstract class DispatcherStore extends BaseStore
             /** @var Action $action */
             $action->addProperty($to, $action->getProperty($from));
         });
+    }
+
+    /**
+     * @param string $guardName
+     * @param callable $callable
+     * @return $this
+     */
+    public function executeOnlyIf($guardName, $callable)
+    {
+        $this->guards[$guardName] = $this->buildExecutor($callable);
+
+        return $this;
     }
 
     /**
