@@ -65,7 +65,7 @@ class ActionCreator
 
     /**
      * @param string $name
-     * @param string $properties
+     * @param array $properties
      * @return Action
      */
     public function buildAction($name, $properties)
