@@ -8,7 +8,7 @@ ENV BASE_PATH ${BASE_PATH:-/code}
 
 COPY . ${BASE_PATH}
 
-RUN chown -R www-data /code/var
+RUN chown -R www-data ${BASE_PATH}/var
 
 ENV SYMFONY_ENV prod
 
