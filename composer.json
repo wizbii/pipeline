@@ -1,6 +1,6 @@
 {
     "name": "wizbii/pipeline",
-    "bin": ["bin/pipeline_start", "bin/pipeline_stop"],
+    "bin": ["bin/pipeline_start", "bin/pipeline_stop", "bin/generate-systemd-units.sh"],
     "autoload": {
         "psr-4": { "Wizbii\\PipelineBundle\\": ""}
     },
