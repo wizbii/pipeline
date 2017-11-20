@@ -11,8 +11,17 @@ class CommandConsumer extends Consumer
      */
     protected $consumeRetryCount = 0;
 
+    /**
+     * @var string
+     */
+    protected $processTitle;
+
     public function consume($msgAmount)
     {
+        if ($this->processTitle) {
+            @cli_set_process_title($this->processTitle);
+        }
+
         try {
             parent::consume($msgAmount);
             $this->consumeRetryCount = 0;
@@ -27,4 +36,8 @@ class CommandConsumer extends Consumer
         }
     }
 
+    public function setProcessTitle(string $processTitle)
+    {
+        $this->processTitle = $processTitle;
+    }
 }
