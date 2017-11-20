@@ -2,13 +2,14 @@
 
 namespace Wizbii\PipelineBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+use Wizbii\PipelineBundle\Consumer\CommandConsumer;
 use Wizbii\PipelineBundle\Factory\PipelineFactory;
 
 /**
@@ -73,6 +74,9 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
                 ->addMethodCall('setCallback', [[new Reference($frontConsumerId), "execute"]])
                 ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
             $name = sprintf('old_sound_rabbit_mq.%s_consumer', $event->getName());
+
+            $this->setConsumerProcessTitle($amqpConsumer, "front_consumer_".$event->getName());
+
             $this->container->setDefinition($name, $amqpConsumer);
         }
 
@@ -103,6 +107,9 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addMethodCall('setQueueOptions', [["name" => $pipelineQueueName]])
             ->addMethodCall('setCallback', [[new Reference("pipeline.consumer.back"), "execute"]])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
+
+        $this->setConsumerProcessTitle($backConsumer, $pipelineQueueName);
+
         $this->container->setDefinition("old_sound_rabbit_mq.pipeline_back_consumer", $backConsumer);
     }
 
@@ -149,6 +156,13 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ]
         ]);
 
+    }
+
+    private function setConsumerProcessTitle(Definition $definition, string $procTitle)
+    {
+        if ($definition->getClass() === CommandConsumer::class) {
+            $definition->addMethodCall('setProcessTitle', [$procTitle]);
+        }
     }
 
     /**
