@@ -3,6 +3,7 @@
 namespace Wizbii\PipelineBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -160,9 +161,12 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
 
     private function setConsumerProcessTitle(Definition $definition, string $procTitle)
     {
-        if ($definition->getClass() === CommandConsumer::class) {
-            $definition->addMethodCall('setProcessTitle', [$procTitle]);
-        }
+        $childDef = new ChildDefinition($definition);
+        $childDef->addMethodCall('setProcessTitle', [$procTitle]);
+
+        $definition->setInstanceofConditionals([
+            CommandConsumer::class => $childDef
+        ]);
     }
 
     /**
