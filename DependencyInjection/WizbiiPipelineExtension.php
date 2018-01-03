@@ -59,6 +59,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
         // create event consumers for each incoming event
         foreach ($pipeline->getIncomingEvents() as $event) {
             $frontConsumerDefinition = new Definition("%pipeline.consumer.front.class%");
+            $frontConsumerDefinition->setProperty("logger", new Reference('monolog.logger.pipeline'));
             $frontConsumerDefinition->setProperty("eventName", $event->getName())
                                     ->setProperty("producer", new Reference($internalProducerId))
                                     ->setPublic(false);
