@@ -10,13 +10,19 @@ class ConsumerCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('pipeline.consumers')) {
+        $this->processConsumers($container, 'pipeline.consumers', 'pipeline.front.consumer');
+        $this->processConsumers($container, 'pipeline.consumers.direct', 'pipeline.front.consumer.direct');
+    }
+
+    private function processConsumers(ContainerBuilder $container, string $serviceId, string $tag): void
+    {
+        if (false === $container->hasDefinition($serviceId)) {
             return;
         }
 
-        $definition = $container->getDefinition('pipeline.consumers');
+        $definition = $container->getDefinition($serviceId);
 
-        foreach ($container->findTaggedServiceIds('pipeline.front.consumer') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds($tag) as $id => $attributes) {
             list(, $name) = explode(".", $id);
             $name = str_replace("_consumer", "", $name);
             $definition->addMethodCall('set', [$name, new Reference($id)]);

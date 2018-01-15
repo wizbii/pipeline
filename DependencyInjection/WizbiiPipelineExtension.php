@@ -11,7 +11,9 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Wizbii\PipelineBundle\Consumer\CommandConsumer;
+use Wizbii\PipelineBundle\Consumer\DirectConsumer;
 use Wizbii\PipelineBundle\Factory\PipelineFactory;
+use Wizbii\PipelineBundle\Model\Event;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -58,27 +60,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
 
         // create event consumers for each incoming event
         foreach ($pipeline->getIncomingEvents() as $event) {
-            $frontConsumerDefinition = new Definition("%pipeline.consumer.front.class%");
-            $frontConsumerDefinition->setProperty("eventName", $event->getName())
-                                    ->setProperty("producer", new Reference($internalProducerId))
-                                    ->setPublic(false);
-            $frontConsumerId = sprintf('pipeline.consumer.front.%s_consumer', $event->getName());
-            $this->container->setDefinition($frontConsumerId, $frontConsumerDefinition);
-
-            $amqpConsumer = new Definition('%pipeline.consumer.command.class%');
-            $amqpConsumer
-                ->addTag('old_sound_rabbit_mq.base_amqp')
-                ->addTag('old_sound_rabbit_mq.consumer')
-                ->addTag('pipeline.front.consumer')
-                ->addMethodCall('setExchangeOptions', [["name" => $event->getName(), "type" => "direct"]])
-                ->addMethodCall('setQueueOptions', [["name" => $event->getName()]])
-                ->addMethodCall('setCallback', [[new Reference($frontConsumerId), "execute"]])
-                ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
-            $name = sprintf('old_sound_rabbit_mq.%s_consumer', $event->getName());
-
-            $this->setConsumerProcessTitle($amqpConsumer, "front_consumer_".$event->getName());
-
-            $this->container->setDefinition($name, $amqpConsumer);
+            $this->configureFrontConsumer($event, $internalProducerId);
         }
 
         // create event producers for each outgoing event
@@ -167,6 +149,51 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
         $definition->setInstanceofConditionals([
             CommandConsumer::class => $childDef
         ]);
+    }
+
+    private function configureFrontConsumer(Event $event, string $internalProducerId): void
+    {
+        $eventName = $event->getName();
+
+        if ($this->config['actions'][$eventName]['type'] === "direct") {
+            $frontConsumerDefinition = new Definition(DirectConsumer::class);
+            $frontConsumerDefinition
+                ->addArgument($eventName)
+                ->addArgument(new Reference('pipeline.provider'))
+                ->addArgument(new Reference('pipeline.dispatcher.action'))
+                ->addArgument(new Reference('monolog.logger.pipeline'))
+                ->setPublic(false);
+
+            $amqpConsumerTag = "pipeline.front.consumer.direct";
+            $procTitle = "direct_front_consumer_" . $eventName;
+        } else {
+            $frontConsumerDefinition = new Definition("%pipeline.consumer.front.class%");
+            $frontConsumerDefinition
+                ->setProperty("eventName", $eventName)
+                ->setProperty("producer", new Reference($internalProducerId))
+                ->setPublic(false);
+
+            $amqpConsumerTag = "pipeline.front.consumer";
+            $procTitle = "front_consumer_" . $eventName;
+        }
+
+        $frontConsumerId = sprintf('pipeline.consumer.front.%s_consumer', $eventName);
+        $this->container->setDefinition($frontConsumerId, $frontConsumerDefinition);
+
+        $amqpConsumer = new Definition('%pipeline.consumer.command.class%');
+        $amqpConsumer
+            ->addTag('old_sound_rabbit_mq.base_amqp')
+            ->addTag('old_sound_rabbit_mq.consumer')
+            ->addTag($amqpConsumerTag)
+            ->addMethodCall('setExchangeOptions', [["name" => $eventName, "type" => "direct"]])
+            ->addMethodCall('setQueueOptions', [["name" => $eventName]])
+            ->addMethodCall('setCallback', [[new Reference($frontConsumerId), "execute"]])
+            ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
+        $name = sprintf('old_sound_rabbit_mq.%s_consumer', $eventName);
+
+        $this->setConsumerProcessTitle($amqpConsumer, $procTitle);
+
+        $this->container->setDefinition($name, $amqpConsumer);
     }
 
     /**

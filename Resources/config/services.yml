@@ -14,6 +14,9 @@ services:
     pipeline.consumers:
         class: 'Wizbii\PipelineBundle\Service\Consumers'
 
+    pipeline.consumers.direct:
+        class: 'Wizbii\PipelineBundle\Service\Consumers'
+
     pipeline.producers:
         class: 'Wizbii\PipelineBundle\Service\Producers'
 

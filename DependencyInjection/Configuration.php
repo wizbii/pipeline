@@ -36,6 +36,7 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('name')
                     ->prototype("array")
                         ->children()
+                            ->enumNode('type')->values(['direct', 'funnel'])->defaultValue('funnel')->end()
                             ->arrayNode('triggered_by_events')
                                 ->prototype('scalar')->end()
                             ->end()
