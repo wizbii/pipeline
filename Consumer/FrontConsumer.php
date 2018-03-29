@@ -15,10 +15,8 @@ class FrontConsumer implements ConsumerInterface
             "original_body" => $msg->body,
             "event_name" => $this->eventName
         ];
-        try {
-            $this->producer->publish(json_encode($message));
-        }
-        catch (\Exception $e) {}
+
+        $this->producer->publish(json_encode($message));
     }
 
     /**
