@@ -14,6 +14,8 @@ RUN chown -R www-data ${BASE_PATH}/var
 
 ENV SYMFONY_ENV prod
 
+RUN composer install --no-dev --classmap-authoritative --no-scripts --prefer-dist --no-progress --no-interaction
+
 RUN ${BASE_PATH}/bin/generate-systemd-units.sh
 
 LABEL org.label-schema.docker.schema-version="1.0" \
