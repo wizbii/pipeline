@@ -19,6 +19,20 @@ EOF
   systemctl enable $svc
 done
 
+svcs=$(${BASE_PATH}/bin/console pipeline:frontend:list --direct)
+for svc in ${svcs} ;  do
+    cat >/etc/systemd/system/$svc@.service <<EOF
+[Service]
+ExecStart=${BASE_PATH}/bin/console rabbitmq:consumer -w $svc
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  systemctl enable $svc@1
+done
+
 cat >/etc/systemd/system/pipeline_back@.service <<EOF
 [Service]
 ExecStart=${BASE_PATH}/bin/console rabbitmq:consumer -w pipeline_back
