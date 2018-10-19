@@ -1,13 +1,5 @@
 FROM wizbii/php:7.1-systemd
 
-ARG GIT_REFERENCE
-ENV GIT_REFERENCE ${GIT_REFERENCE:-HEAD}
-
-ARG BASE_PATH
-ENV BASE_PATH ${BASE_PATH:-/code}
-
-ARG BUILD_DATE
-
 COPY . ${BASE_PATH}
 
 RUN chown -R www-data ${BASE_PATH}/var
@@ -18,8 +10,8 @@ RUN composer install --no-dev --classmap-authoritative --no-scripts --prefer-dis
 
 RUN ${BASE_PATH}/bin/generate-systemd-units.sh
 
-LABEL org.label-schema.docker.schema-version="1.0" \
-      org.label-schema.vendor="Wizbii" \
-      org.label-schema.vcs-ref=$GIT_REFERENCE \
-      org.label-schema.build-date=$BUILD_DATE \
-      com.wizbii.type="pipeline"
+ONBUILD LABEL org.label-schema.vendor="Wizbii" \
+              org.label-schema.schema-version="1.0" \
+              org.label-schema.build-date="${BUILD_DATE}" \
+              org.label-schema.vcs-ref="$GIT_REFERENCE" \
+              com.wizbii.type="pipeline"
