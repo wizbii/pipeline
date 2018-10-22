@@ -8,7 +8,7 @@ ENV SYMFONY_ENV prod
 
 RUN composer install --no-dev --classmap-authoritative --no-scripts --prefer-dist --no-progress --no-interaction
 
-RUN ${BASE_PATH}/bin/generate-systemd-units.sh
+RUN ${BASE_PATH}/bin/generate-systemd-units
 
 ONBUILD LABEL org.label-schema.vendor="Wizbii" \
               org.label-schema.schema-version="1.0" \

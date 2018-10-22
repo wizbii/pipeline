@@ -1,0 +1,103 @@
+#!/usr/bin/env php
+<?php
+namespace Wizbii\PipelineBundle;
+
+$systemd = new SystemdHelper(getenv('SYSTEMD_UNITS_DIR') ?: '/etc/systemd/system');
+
+$basePath = getenv("BASE_PATH") ?: getcwd();
+
+echo "Creating systemd units for frontend consumers.\n";
+$services = array_filter(explode(" ", exec("$basePath/bin/console pipeline:frontend:list")));
+foreach ($services as $service) {
+    $systemd->enabledUnit($service, "Pipeline frontend consumer '$service'", [
+        "ExecStart" => "$basePath/bin/console rabbitmq:consumer -w $service",
+        "Restart" => "always",
+    ]);
+}
+
+echo "Creating systemd units for direct consumers.\n";
+$directServices = array_filter(explode(" ", exec("$basePath/bin/console pipeline:frontend:list --direct")));
+
+foreach ($directServices as $directService) {
+    $systemd->unit($directService.'@', "Pipeline consumer '$service' %i", [
+        "ExecStart" => "$basePath/bin/console rabbitmq:consumer -w $directService",
+        "Restart" => "always",
+    ]);
+
+    $instanceCountVariableName = "NB_".strtoupper($directService);
+    $provisionnerServiceName = "${directService}_provisionner";
+
+    $systemd->enabledUnit($provisionnerServiceName, "Service that enables N instances of $directService", [
+        "ExecStart" => sprintf(
+            '/bin/bash -c "for i in `seq $${%s:-5}` ; do systemctl enable %s@$${i} ; systemctl start %s@$${i}; done"',
+            $instanceCountVariableName,
+            $provisionnerServiceName,
+            $directService
+        ),
+        "RemainAfterExit" => "Yes",
+    ]);
+}
+
+$systemd->unit("pipeline_back@", 'Pipeline backend consumer %i', [
+    'ExecStart' => "$basePath/bin/console rabbitmq:consumer -w pipeline_back",
+    'Restart' => 'always',
+]);
+
+echo "Creating systemd units for backend consumers.\n";
+$systemd->enabledUnit("pipeline_back_provisonner", 'Service that enables N instances of backend consumer', [
+    'ExecStart' => '/bin/bash -c "for i in `seq $${BACK_INSTANCES_COUNT:-1}` ; do systemctl enable pipeline_back@$${i} ; systemctl start pipeline_back@$${i}; done"',
+    'RemainAfterExit' => 'yes',
+]);
+
+echo "Done.\n";
+
+function exec(string $cmd): string
+{
+    \exec($cmd.' 2>&1', $output, $exitStatus);
+
+    $output = trim(implode("\n", (array) $output));
+
+    if ($exitStatus !== 0) {
+        throw new \RuntimeException("Failed to run '$cmd', output was:\n\n$output");
+    }
+
+    return $output;
+}
+
+class SystemdHelper
+{
+    private $unitsDir;
+
+    public function __construct(string $unitsDir)
+    {
+        $this->unitsDir = $unitsDir;
+    }
+
+    public function unit(string $unitName, string $description, array $serviceSpecs)
+    {
+        $specs = array_map(function (string $specName, string $specContent) {
+            return "$specName=$specContent";
+        }, array_keys($serviceSpecs), array_values($serviceSpecs));
+
+        $unitContent = sprintf(<<<'UNIT'
+[Unit]
+Description=%s
+
+[Service]
+%s
+
+[Install]
+WantedBy=multi-user.target
+
+UNIT
+, $description, implode("\n", $specs));
+
+        file_put_contents("{$this->unitsDir}/$unitName.service", $unitContent);
+    }
+
+    public function enabledUnit(string $unitName, string $description, array $serviceSpecs)
+    {
+        $this->unit($unitName, $description, $serviceSpecs);
+        exec("systemctl enable $unitName.service");
+    }
+}
