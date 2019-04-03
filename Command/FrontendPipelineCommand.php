@@ -4,6 +4,7 @@ namespace Wizbii\PipelineBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wizbii\PipelineBundle\Service\Pipeline;
 use Wizbii\PipelineBundle\Service\PipelineProvider;
@@ -17,7 +18,8 @@ class FrontendPipelineCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $consumers = $this->getConsumers();
+        $consumers = $this->getConsumers($input->getOption('direct'));
+
         echo join(" ", $consumers->keys());
     }
 
@@ -25,11 +27,14 @@ class FrontendPipelineCommand extends ContainerAwareCommand
     {
         $this
             ->setName('pipeline:frontend:list')
+            ->addOption('direct', null, InputOption::VALUE_NONE)
         ;
     }
 
-    protected function getConsumers()
+    protected function getConsumers(bool $directConsumers)
     {
-        return $this->getContainer()->get("pipeline.consumers");
+        $serviceId = $directConsumers ? "pipeline.consumers.direct" : "pipeline.consumers";
+
+        return $this->getContainer()->get($serviceId);
     }
 }
