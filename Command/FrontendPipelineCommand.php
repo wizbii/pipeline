@@ -20,7 +20,7 @@ class FrontendPipelineCommand extends ContainerAwareCommand
     {
         $consumers = $this->getConsumers($input->getOption('direct'));
 
-        echo join(" ", $consumers->keys());
+        echo join(" ", $consumers->getArrayCopy());
     }
 
     protected function configure()

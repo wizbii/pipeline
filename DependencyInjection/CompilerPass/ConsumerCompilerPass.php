@@ -25,7 +25,7 @@ class ConsumerCompilerPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds($tag) as $id => $attributes) {
             list(, $name) = explode(".", $id);
             $name = str_replace("_consumer", "", $name);
-            $definition->addMethodCall('set', [$name, new Reference($id)]);
+            $definition->addMethodCall('append', [$name]);
         }
     }
 }

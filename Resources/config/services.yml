@@ -12,10 +12,10 @@ services:
             pipelineProvider: '@pipeline.provider'
 
     pipeline.consumers:
-        class: 'Wizbii\PipelineBundle\Service\Consumers'
+        class: 'ArrayObject'
 
     pipeline.consumers.direct:
-        class: 'Wizbii\PipelineBundle\Service\Consumers'
+        class: 'ArrayObject'
 
     pipeline.producers:
         class: 'Wizbii\PipelineBundle\Service\Producers'
