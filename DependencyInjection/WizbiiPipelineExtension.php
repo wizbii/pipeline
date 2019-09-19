@@ -88,6 +88,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addTag('old_sound_rabbit_mq.consumer')
             ->addMethodCall('setExchangeOptions', [["name" => $pipelineExchangeName, "type" => "direct"]])
             ->addMethodCall('setQueueOptions', [["name" => $pipelineQueueName]])
+            ->addMethodCall('setQosOptions', [0, 200])
             ->addMethodCall('setCallback', [[new Reference("pipeline.consumer.back"), "execute"]])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
 
@@ -187,6 +188,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addTag($amqpConsumerTag)
             ->addMethodCall('setExchangeOptions', [["name" => $eventName, "type" => "direct"]])
             ->addMethodCall('setQueueOptions', [["name" => $eventName]])
+            ->addMethodCall('setQosOptions', [0, 200])
             ->addMethodCall('setCallback', [[new Reference($frontConsumerId), "execute"]])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
         $name = sprintf('old_sound_rabbit_mq.%s_consumer', $eventName);
