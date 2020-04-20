@@ -19,8 +19,9 @@ class FrontendPipelineCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $consumers = $this->getConsumers($input->getOption('direct'));
+        $asJson = $input->getOption('json');
 
-        echo join(" ", $consumers->getArrayCopy());
+        $output->write($asJson ? json_encode($consumers) : join(" ", $consumers));
     }
 
     protected function configure()
@@ -28,6 +29,7 @@ class FrontendPipelineCommand extends ContainerAwareCommand
         $this
             ->setName('pipeline:frontend:list')
             ->addOption('direct', null, InputOption::VALUE_NONE)
+            ->addOption('json', null, InputOption::VALUE_NONE)
         ;
     }
 
@@ -35,6 +37,6 @@ class FrontendPipelineCommand extends ContainerAwareCommand
     {
         $serviceId = $directConsumers ? "pipeline.consumers.direct" : "pipeline.consumers";
 
-        return $this->getContainer()->get($serviceId);
+        return $this->getContainer()->get($serviceId)->getArrayCopy();
     }
 }
