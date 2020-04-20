@@ -14,8 +14,10 @@ abstract class BaseStore implements StoreInterface
      */
     public function __construct()
     {
-        $className = explode('\\', get_class($this));
-        $this->name = end($className);
+        $fqcn = get_class($this);
+        $parts = explode('\\', get_class($this));
+
+        $this->name = $parts ? end($parts) : $fqcn;
     }
 
     /**
@@ -25,5 +27,4 @@ abstract class BaseStore implements StoreInterface
     {
         return $this->name;
     }
-
 }

@@ -16,6 +16,7 @@ class Action
 
     /**
      * Action constructor.
+     *
      * @param string $name
      */
     public function __construct($name)
@@ -34,7 +35,7 @@ class Action
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -50,22 +51,23 @@ class Action
     /**
      * @param array $properties
      */
-    public function setProperties($properties)
+    public function setProperties($properties): void
     {
         $this->properties = $properties;
     }
 
     /**
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
-    public function addProperty($key, $value)
+    public function addProperty($key, $value): void
     {
         $this->properties[$key] = $value;
     }
 
     /**
      * @param string $key
+     *
      * @return bool
      */
     public function hasProperty($key)
@@ -75,7 +77,8 @@ class Action
 
     /**
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
+     *
      * @return mixed
      */
     public function &getProperty($key, $default = null)
@@ -84,13 +87,14 @@ class Action
         if ($this->hasProperty($key)) {
             $value = $this->properties[$key];
         }
+
         return $value;
     }
 
     /**
      * @param string $key
      */
-    public function removeProperty($key)
+    public function removeProperty($key): void
     {
         if ($this->hasProperty($key)) {
             unset($this->properties[$key]);
@@ -102,6 +106,6 @@ class Action
      */
     public function __toString()
     {
-        return "[Action] name : '" . $this->name . "' ; content : " . json_encode($this->properties);
+        return "[Action] name : '".$this->name."' ; content : ".json_encode($this->properties);
     }
 }

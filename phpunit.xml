@@ -8,7 +8,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="false"
+         bootstrap="vendor/autoload.php"
 >
 
     <testsuites>
@@ -18,9 +18,12 @@
     </testsuites>
 
     <filter>
-        <blacklist>
-            <directory suffix=".php">vendor</directory>
-            <directory suffix=".php">Resources</directory>
-        </blacklist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory suffix=".php">vendor</directory>
+                <directory suffix=".php">Resources</directory>
+            </exclude>
+        </whitelist>
     </filter>
 </phpunit>

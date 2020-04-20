@@ -12,8 +12,8 @@ class CallableMatcherTest extends BaseTestCase
      */
     public function doesMatch()
     {
-        $matcher = new CallableMatcher(function($value) {return $value === "foo";});
-        $this->assertThat($matcher->matches("foo"), $this->isTrue());
+        $matcher = new CallableMatcher(function ($value) {return $value === 'foo'; });
+        $this->assertThat($matcher->matches('foo'), $this->isTrue());
     }
 
     /**
@@ -21,7 +21,7 @@ class CallableMatcherTest extends BaseTestCase
      */
     public function doesNotMatch()
     {
-        $matcher = new CallableMatcher(function($value) {return $value === "foo";});
-        $this->assertThat($matcher->matches("bar"), $this->isFalse());
+        $matcher = new CallableMatcher(function ($value) {return $value === 'foo'; });
+        $this->assertThat($matcher->matches('bar'), $this->isFalse());
     }
 }

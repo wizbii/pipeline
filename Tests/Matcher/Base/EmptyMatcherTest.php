@@ -13,7 +13,7 @@ class EmptyMatcherTest extends BaseTestCase
     public function doesMatch()
     {
         $matcher = new EmptyMatcher();
-        $this->assertThat($matcher->matches(""), $this->isTrue());
+        $this->assertThat($matcher->matches(''), $this->isTrue());
         $this->assertThat($matcher->matches(null), $this->isTrue());
         $this->assertThat($matcher->matches([]), $this->isTrue());
     }
@@ -24,7 +24,7 @@ class EmptyMatcherTest extends BaseTestCase
     public function doesNotMatch()
     {
         $matcher = new EmptyMatcher();
-        $this->assertThat($matcher->matches("hello"), $this->isFalse());
-        $this->assertThat($matcher->matches(["world"]), $this->isFalse());
+        $this->assertThat($matcher->matches('hello'), $this->isFalse());
+        $this->assertThat($matcher->matches(['world']), $this->isFalse());
     }
 }

@@ -10,13 +10,13 @@ class FrontConsumer implements ConsumerInterface
 {
     public function execute(AMQPMessage $msg)
     {
-        echo "catch event of type " . $this->eventName . ". Dispatch it to backend consumer\n";
+        echo 'catch event of type '.$this->eventName.". Dispatch it to backend consumer\n";
         $message = [
-            "original_body" => $msg->body,
-            "event_name" => $this->eventName
+            'original_body' => $msg->body,
+            'event_name' => $this->eventName,
         ];
 
-        $this->producer->publish(json_encode($message));
+        $this->producer->publish(json_encode($message, JSON_THROW_ON_ERROR));
     }
 
     /**

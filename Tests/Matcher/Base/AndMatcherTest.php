@@ -17,7 +17,7 @@ class AndMatcherTest extends BaseTestCase
     public function doesMatchWithNoOperand()
     {
         $matcher = new AndMatcher();
-        $this->assertThat($matcher->matches("any value"), $this->isTrue());
+        $this->assertThat($matcher->matches('any value'), $this->isTrue());
     }
 
     /**
@@ -26,8 +26,8 @@ class AndMatcherTest extends BaseTestCase
     public function doesMatchWithSingleOperand()
     {
         $matcher = new AndMatcher();
-        $matcher->addMatcher(new Is("foo"));
-        $this->assertThat($matcher->matches("foo"), $this->isTrue());
+        $matcher->addMatcher(new Is('foo'));
+        $this->assertThat($matcher->matches('foo'), $this->isTrue());
     }
 
     /**
@@ -36,10 +36,10 @@ class AndMatcherTest extends BaseTestCase
     public function doesMatchWithMultipleOperands()
     {
         $matcher = new AndMatcher();
-        $matcher->addMatcher(new Is("foo"));
+        $matcher->addMatcher(new Is('foo'));
         $matcher->addMatcher(new Is(new Not(new EmptyMatcher())));
-        $matcher->addMatcher(new In(["foo", "bar"]));
-        $this->assertThat($matcher->matches("foo"), $this->isTrue());
+        $matcher->addMatcher(new In(['foo', 'bar']));
+        $this->assertThat($matcher->matches('foo'), $this->isTrue());
     }
 
     /**
@@ -48,7 +48,7 @@ class AndMatcherTest extends BaseTestCase
     public function doesNotMatch()
     {
         $matcher = new AndMatcher();
-        $matcher->addMatcher(new Is("foo"));
-        $this->assertThat($matcher->matches("bar"), $this->isFalse());
+        $matcher->addMatcher(new Is('foo'));
+        $this->assertThat($matcher->matches('bar'), $this->isFalse());
     }
 }

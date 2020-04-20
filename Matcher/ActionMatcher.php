@@ -46,6 +46,7 @@ class ActionMatcher
 
     /**
      * @param string $propertyName
+     *
      * @return AndMatcher
      */
     public function addMatcherOnPropertyName($propertyName)
@@ -59,13 +60,14 @@ class ActionMatcher
     /**
      * @param callable $callable
      */
-    public function addExecutor($callable)
+    public function addExecutor($callable): void
     {
         $this->executors[] = $callable;
     }
 
     /**
      * @param Action $action
+     *
      * @return bool
      */
     public function matches($action)

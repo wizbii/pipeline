@@ -6,10 +6,16 @@ class ContainsKeys implements Matcher
 {
     public function matches($value)
     {
-        if (!is_array($this->expectedKeys)) return false;
-        if (!is_array($value)) return false;
+        if (!is_array($this->expectedKeys)) {
+            return false;
+        }
+        if (!is_array($value)) {
+            return false;
+        }
         foreach ($this->expectedKeys as $key) {
-            if (!array_key_exists($key, $value)) return false;
+            if (!array_key_exists($key, $value)) {
+                return false;
+            }
         }
 
         return true;
@@ -22,6 +28,7 @@ class ContainsKeys implements Matcher
 
     /**
      * ContainsKeys constructor.
+     *
      * @param array $expectedKeys
      */
     public function __construct($expectedKeys)
@@ -31,6 +38,7 @@ class ContainsKeys implements Matcher
 
     /**
      * @param mixed|Matcher $expectedKeys
+     *
      * @return Matcher
      */
     public static function build($expectedKeys)

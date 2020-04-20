@@ -13,8 +13,10 @@ use Wizbii\PipelineBundle\Model\Store;
 class PipelineFactory
 {
     /**
-     * @param $configuration
+     * @param array<string, mixed> $configuration
+     *
      * @return Pipeline
+     *
      * @throws CircularPipelineException
      */
     public function buildPipeline($configuration)
@@ -25,12 +27,12 @@ class PipelineFactory
         $this->buildName($pipeline, $configuration);
 
         // create Actions, Events and ActionCreators
-        foreach ($configuration["actions"] as $actionName => $actionConfig) {
+        foreach ($configuration['actions'] as $actionName => $actionConfig) {
             $this->buildAction($pipeline, $actionName, $actionConfig);
         }
 
         // create Stores
-        $aStores = $configuration["stores"];
+        $aStores = $configuration['stores'];
         foreach ($aStores as $storeName => $storeConfig) {
             $this->buildStore($pipeline, $storeName, $storeConfig);
         }
@@ -42,29 +44,32 @@ class PipelineFactory
     }
 
     /**
-     * Set the pipeline name. Empty name will throw an exception
+     * Set the pipeline name. Empty name will throw an exception.
+     *
      * @param Pipeline $pipeline
-     * @param array $configuration
+     * @param array    $configuration
+     *
      * @throws InvalidConfigurationException
      */
-    public function buildName($pipeline, $configuration)
+    public function buildName($pipeline, $configuration): void
     {
-        $name = is_array($configuration) && array_key_exists("name", $configuration) ? $configuration["name"] : null;
+        $name = is_array($configuration) && array_key_exists('name', $configuration) ? $configuration['name'] : null;
         if (empty($name)) {
-            throw new InvalidConfigurationException("Missing pipeline name");
+            throw new InvalidConfigurationException('Missing pipeline name');
         }
         $pipeline->setName($name);
     }
 
     /**
-     * Add actions inside Pipeline based on the configuration provided by Symfony Configuration
+     * Add actions inside Pipeline based on the configuration provided by Symfony Configuration.
+     *
      * @param Pipeline $pipeline
-     * @param string $actionName
-     * @param array $actionConfiguration
+     * @param string   $actionName
+     * @param array    $actionConfiguration
      */
-    public function buildAction($pipeline, $actionName, $actionConfiguration = [])
+    public function buildAction($pipeline, $actionName, $actionConfiguration = []): void
     {
-        $triggeredByEvents = is_array($actionConfiguration) && array_key_exists("triggered_by_events", $actionConfiguration) ? $actionConfiguration["triggered_by_events"] : [];
+        $triggeredByEvents = is_array($actionConfiguration) && array_key_exists('triggered_by_events', $actionConfiguration) ? $actionConfiguration['triggered_by_events'] : [];
 
         if (empty($triggeredByEvents)) {
             // default behavior : auto-wiring action to the same event name
@@ -75,7 +80,7 @@ class PipelineFactory
         $action = new Action($actionName);
         $actionCreator = new ActionCreator($action);
         foreach ($triggeredByEvents as $triggeredByEvent) {
-            $event = $pipeline->hasIncomingEvent($triggeredByEvent) ? $pipeline->getIncomingEvent($triggeredByEvent) : new Event($triggeredByEvent);
+            $event = $pipeline->getIncomingEvent($triggeredByEvent) ?: new Event($triggeredByEvent);
             $actionCreator->addTriggeredByEvent($event);
             $pipeline->addIncomingEvent($event);
         }
@@ -85,16 +90,17 @@ class PipelineFactory
 
     /**
      * @param Pipeline $pipeline
-     * @param string $storeName
-     * @param array $storeConfiguration
+     * @param string   $storeName
+     * @param array    $storeConfiguration
+     *
      * @throws InvalidConfigurationException
      */
-    public function buildStore($pipeline, $storeName, $storeConfiguration = [])
+    public function buildStore($pipeline, $storeName, $storeConfiguration = []): void
     {
-        $triggeredByActions = is_array($storeConfiguration) && array_key_exists("triggered_by_actions", $storeConfiguration) ? $storeConfiguration["triggered_by_actions"] : [];
-        $triggeredByStores = is_array($storeConfiguration) && array_key_exists("triggered_by_stores", $storeConfiguration) ? $storeConfiguration["triggered_by_stores"] : [];
-        $triggeredEvent = is_array($storeConfiguration) && array_key_exists("triggered_event", $storeConfiguration) ? $storeConfiguration["triggered_event"] : null;
-        $service = is_array($storeConfiguration) && array_key_exists("service", $storeConfiguration) ? $storeConfiguration["service"] : null;
+        $triggeredByActions = is_array($storeConfiguration) && array_key_exists('triggered_by_actions', $storeConfiguration) ? $storeConfiguration['triggered_by_actions'] : [];
+        $triggeredByStores = is_array($storeConfiguration) && array_key_exists('triggered_by_stores', $storeConfiguration) ? $storeConfiguration['triggered_by_stores'] : [];
+        $triggeredEvent = is_array($storeConfiguration) && array_key_exists('triggered_event', $storeConfiguration) ? $storeConfiguration['triggered_event'] : null;
+        $service = is_array($storeConfiguration) && array_key_exists('service', $storeConfiguration) ? $storeConfiguration['service'] : null;
 
         $store = $pipeline->hasStore($storeName) ? $pipeline->getStore($storeName) : new Store($storeName);
         $store->setService($service);
@@ -118,7 +124,7 @@ class PipelineFactory
 
         // add triggered event
         if (isset($triggeredEvent)) {
-            $event = $pipeline->hasOutgoingEvent($triggeredEvent) ? $pipeline->getOutgoingEvent($triggeredEvent) : new Event($triggeredEvent);
+            $event = $pipeline->getOutgoingEvent($triggeredEvent) ?: new Event($triggeredEvent);
             $store->setTriggeredEvent($event);
             $pipeline->addOutgoingEvent($event);
         }

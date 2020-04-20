@@ -12,7 +12,7 @@ class Pipeline
     protected $name;
 
     /**
-     * @var Action[]
+     * @var array<string, Action>
      */
     protected $actions = [];
 
@@ -39,7 +39,7 @@ class Pipeline
     /**
      * @throws CircularPipelineException
      */
-    public function checkForCircularReferences()
+    public function checkForCircularReferences(): void
     {
         foreach ($this->stores as $storeName => $store) {
             if ($store->dependsOnStore($store)) {
@@ -59,7 +59,7 @@ class Pipeline
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -75,7 +75,7 @@ class Pipeline
     /**
      * @param Action[] $actions
      */
-    public function setActions($actions)
+    public function setActions($actions): void
     {
         $this->actions = $actions;
     }
@@ -83,22 +83,28 @@ class Pipeline
     /**
      * @param Action $action
      */
-    public function addAction($action)
+    public function addAction($action): void
     {
         $this->actions[$action->getName()] = $action;
     }
 
     /**
      * @param string $name
+     *
      * @return Action
      */
     public function getAction($name)
     {
-        return $this->hasAction($name) ? $this->actions[$name] : null;
+        if (!$this->hasAction($name)) {
+            throw new \OutOfBoundsException("No action '$name' found on pipeline '{$this->name}'");
+        }
+
+        return $this->actions[$name];
     }
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasAction($name)
@@ -117,7 +123,7 @@ class Pipeline
     /**
      * @param Event[] $incomingEvents
      */
-    public function setIncomingEvents($incomingEvents)
+    public function setIncomingEvents($incomingEvents): void
     {
         $this->incomingEvents = $incomingEvents;
     }
@@ -125,14 +131,15 @@ class Pipeline
     /**
      * @param Event $event
      */
-    public function addIncomingEvent($event)
+    public function addIncomingEvent($event): void
     {
         $this->incomingEvents[$event->getName()] = $event;
     }
 
     /**
      * @param string $name
-     * @return Event
+     *
+     * @return Event|null
      */
     public function getIncomingEvent($name)
     {
@@ -141,6 +148,7 @@ class Pipeline
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasIncomingEvent($name)
@@ -159,7 +167,7 @@ class Pipeline
     /**
      * @param Event[] $outgoingEvents
      */
-    public function setOutgoingEvents($outgoingEvents)
+    public function setOutgoingEvents($outgoingEvents): void
     {
         $this->outgoingEvents = $outgoingEvents;
     }
@@ -167,14 +175,15 @@ class Pipeline
     /**
      * @param Event $event
      */
-    public function addOutgoingEvent($event)
+    public function addOutgoingEvent($event): void
     {
         $this->outgoingEvents[$event->getName()] = $event;
     }
 
     /**
      * @param string $name
-     * @return Event
+     *
+     * @return Event|null
      */
     public function getOutgoingEvent($name)
     {
@@ -183,6 +192,7 @@ class Pipeline
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasOutgoingEvent($name)
@@ -201,7 +211,7 @@ class Pipeline
     /**
      * @param ActionCreator[] $actionCreators
      */
-    public function setActionCreators($actionCreators)
+    public function setActionCreators($actionCreators): void
     {
         $this->actionCreators = $actionCreators;
     }
@@ -209,14 +219,15 @@ class Pipeline
     /**
      * @param ActionCreator $actionCreator
      */
-    public function addActionCreator($actionCreator)
+    public function addActionCreator($actionCreator): void
     {
         $this->actionCreators[$actionCreator->getCreatedAction()->getName()] = $actionCreator;
     }
 
     /**
      * @param string $name
-     * @return ActionCreator
+     *
+     * @return ActionCreator|null
      */
     public function getActionCreatorFor($name)
     {
@@ -225,6 +236,7 @@ class Pipeline
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasActionCreatorFor($name)
@@ -243,7 +255,7 @@ class Pipeline
     /**
      * @param Store[] $stores
      */
-    public function setStores($stores)
+    public function setStores($stores): void
     {
         $this->stores = $stores;
     }
@@ -251,22 +263,28 @@ class Pipeline
     /**
      * @param Store $store
      */
-    public function addStore($store)
+    public function addStore($store): void
     {
         $this->stores[$store->getName()] = $store;
     }
 
     /**
      * @param string $name
+     *
      * @return Store
      */
     public function getStore($name)
     {
-        return $this->hasStore($name) ? $this->stores[$name] : null;
+        if (!$this->hasStore($name)) {
+            throw new \OutOfBoundsException("No store '$name' found on pipeline '{$this->name}'");
+        }
+
+        return $this->stores[$name];
     }
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function hasStore($name)

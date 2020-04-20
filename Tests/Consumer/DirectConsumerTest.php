@@ -2,9 +2,10 @@
 
 namespace Tests\Consumer;
 
-use PHPUnit\Framework\TestCase;
 use PhpAmqpLib\Message\AMQPMessage;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use Wizbii\PipelineBundle\Consumer\DirectConsumer;
 use Wizbii\PipelineBundle\Dispatcher\Action\ActionDispatcherInterface;
@@ -15,11 +16,13 @@ use Wizbii\PipelineBundle\Service\PipelineProvider;
 
 class DirectConsumerTest extends TestCase
 {
-    const EVENT_NAME = "event_name";
+    use ProphecyTrait;
+
+    const EVENT_NAME = 'event_name';
 
     private $consumer;
 
-    public function setup()
+    public function setUp(): void
     {
         $this->pipelineProvider = $this->prophesize(PipelineProvider::class);
         $this->actionDispatcher = $this->prophesize(ActionDispatcherInterface::class);

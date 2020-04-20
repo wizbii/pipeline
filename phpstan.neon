@@ -1,0 +1,7 @@
+parameters:
+    excludes_analyse:
+        - vendor/
+        - DependencyInjection/
+        - Command/FrontendPipelineCommand.php
+        - Tests/
+    checkMissingIterableValueType: false

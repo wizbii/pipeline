@@ -22,7 +22,7 @@ class IsArrayTest extends BaseTestCase
     public function doesMatchOnNonEmptyArray()
     {
         $matcher = new IsArray();
-        $this->assertThat($matcher->matches(["foo", "bar" => "baz"]), $this->isTrue());
+        $this->assertThat($matcher->matches(['foo', 'bar' => 'baz']), $this->isTrue());
     }
 
     /**
@@ -31,7 +31,7 @@ class IsArrayTest extends BaseTestCase
     public function doesNotMatchOnScalar()
     {
         $matcher = new IsArray();
-        $this->assertThat($matcher->matches("bar"), $this->isFalse());
+        $this->assertThat($matcher->matches('bar'), $this->isFalse());
     }
 
     /**

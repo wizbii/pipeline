@@ -6,10 +6,8 @@ use Psr\Log\NullLogger;
 use Symfony\Component\DependencyInjection\Container;
 use Wizbii\PipelineBundle\Dispatcher\Action\ActionDispatcher;
 use Wizbii\PipelineBundle\Model\Action;
-use Wizbii\PipelineBundle\Model\DataBag;
 use Wizbii\PipelineBundle\Model\Pipeline;
 use Wizbii\PipelineBundle\Model\Store;
-use Wizbii\PipelineBundle\Runnable\BaseStore;
 use Wizbii\PipelineBundle\Service\PipelineProvider;
 use Wizbii\PipelineBundle\Tests\BaseTestCase;
 
@@ -20,7 +18,7 @@ class ActionDispatcherTest extends BaseTestCase
      */
     protected $actionDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->actionDispatcher = new ActionDispatcher();
@@ -35,15 +33,15 @@ class ActionDispatcherTest extends BaseTestCase
     {
         // init container
         $runnableStore = $this->createMock('Wizbii\PipelineBundle\Runnable\StoreInterface');
-        $runnableStore->expects($this->once())->method("run");
+        $runnableStore->expects($this->once())->method('run');
         $container = new Container();
-        $container->set("pipeline.store.profile.dashboard", $runnableStore);
+        $container->set('pipeline.store.profile.dashboard', $runnableStore);
         $this->actionDispatcher->container = $container;
 
         // init pipeline
-        $action = new Action("profile_created");
-        $store = new Store("profile_network");
-        $store->setService("pipeline.store.profile.dashboard");
+        $action = new Action('profile_created');
+        $store = new Store('profile_network');
+        $store->setService('pipeline.store.profile.dashboard');
         $store->addTriggeredByAction($action);
         $pipeline = new Pipeline();
         $pipeline->addStore($store);
@@ -64,9 +62,9 @@ class ActionDispatcherTest extends BaseTestCase
         $this->actionDispatcher->container = $container;
 
         // init pipeline
-        $action = new Action("profile_created");
-        $store = new Store("profile_network");
-        $store->setService("pipeline.store.profile.dashboard");
+        $action = new Action('profile_created');
+        $store = new Store('profile_network');
+        $store->setService('pipeline.store.profile.dashboard');
         $store->addTriggeredByAction($action);
         $pipeline = new Pipeline();
         $pipeline->addStore($store);

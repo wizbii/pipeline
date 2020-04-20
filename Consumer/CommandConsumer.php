@@ -23,20 +23,20 @@ class CommandConsumer extends Consumer
         }
 
         try {
-            parent::consume($msgAmount);
+            $res = parent::consume($msgAmount);
             $this->consumeRetryCount = 0;
-        }
-        catch (\Exception $e) {
-            $this->consumeRetryCount++;
+
+            return $res;
+        } catch (\Exception $e) {
+            ++$this->consumeRetryCount;
             if ($this->consumeRetryCount < 10) {
-                parent::consume($msgAmount);
-                return;
+                return parent::consume($msgAmount);
             }
             throw $e;
         }
     }
 
-    public function setProcessTitle(string $processTitle)
+    public function setProcessTitle(string $processTitle): void
     {
         $this->processTitle = $processTitle;
     }

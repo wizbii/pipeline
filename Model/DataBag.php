@@ -2,6 +2,9 @@
 
 namespace Wizbii\PipelineBundle\Model;
 
+/**
+ * @phpstan-implements \IteratorAggregate<string, mixed>
+ */
 class DataBag implements \IteratorAggregate, \Countable
 {
     /**
@@ -16,7 +19,7 @@ class DataBag implements \IteratorAggregate, \Countable
      *
      * @param array $parameters An array of parameters
      */
-    public function __construct(array $parameters = array())
+    public function __construct(array $parameters = [])
     {
         $this->parameters = $parameters;
     }
@@ -46,7 +49,7 @@ class DataBag implements \IteratorAggregate, \Countable
      *
      * @param array $parameters An array of parameters
      */
-    public function replace(array $parameters = array())
+    public function replace(array $parameters = []): void
     {
         $this->parameters = $parameters;
     }
@@ -56,14 +59,15 @@ class DataBag implements \IteratorAggregate, \Countable
      *
      * @param array $parameters An array of parameters
      */
-    public function add(array $parameters = array())
+    public function add(array $parameters = []): void
     {
         $this->parameters = array_replace($this->parameters, $parameters);
     }
 
     /**
      * Returns a parameter by name.
-     * @param string $key The key
+     *
+     * @param string $key     The key
      * @param string $default The default value
      *
      * @return mixed
@@ -79,7 +83,7 @@ class DataBag implements \IteratorAggregate, \Countable
      * @param string $key   The key
      * @param mixed  $value The value
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->parameters[$key] = $value;
     }
@@ -101,7 +105,7 @@ class DataBag implements \IteratorAggregate, \Countable
      *
      * @param string $key The key
      */
-    public function remove($key)
+    public function remove($key): void
     {
         unset($this->parameters[$key]);
     }
@@ -109,7 +113,7 @@ class DataBag implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for parameters.
      *
-     * @return \ArrayIterator An \ArrayIterator instance
+     * @return \ArrayIterator<string, mixed> An \ArrayIterator instance
      */
     public function getIterator()
     {

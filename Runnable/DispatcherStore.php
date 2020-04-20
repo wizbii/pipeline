@@ -15,7 +15,6 @@ use Wizbii\PipelineBundle\Matcher\Base\LessThanOrEquals;
 use Wizbii\PipelineBundle\Matcher\Base\Matcher;
 use Wizbii\PipelineBundle\Matcher\Base\Not;
 use Wizbii\PipelineBundle\Model\Action;
-use Wizbii\PipelineBundle\Model\DataBag;
 use Wizbii\PipelineBundle\Runnable\EventsGenerator\CollectionEventsGenerator;
 use Wizbii\PipelineBundle\Runnable\EventsGenerator\ComposableEventsGenerator;
 use Wizbii\PipelineBundle\Runnable\EventsGenerator\EventsGenerator;
@@ -58,11 +57,11 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * Configure the current store regarding input action and executors
+     * Configure the current store regarding input action and executors.
      */
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function run($action)
     {
@@ -71,7 +70,8 @@ abstract class DispatcherStore extends BaseStore
         foreach ($this->guards as $guardName => $guard) {
             if (!call_user_func_array($guard, [$action])) {
                 // stop execution
-                echo "Store '" . $this->getName() . "' has been stopped due to guard '$guardName'\n";
+                echo "Store '".$this->getName()."' has been stopped due to guard '$guardName'\n";
+
                 return $composableEventsGenerator;
             }
         }
@@ -111,7 +111,8 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $executor
-     * @param Action $action
+     * @param Action   $action
+     *
      * @return EventsGenerator
      */
     protected function runExecutor($executor, $action)
@@ -119,9 +120,10 @@ abstract class DispatcherStore extends BaseStore
         $eventsGenerator = call_user_func_array($executor, [$action]);
         // aggregate eventsConfig
         if (isset($eventsGenerator)) {
-            if (! $eventsGenerator instanceof EventsGenerator) {
+            if (!$eventsGenerator instanceof EventsGenerator) {
                 $eventsGenerator = new CollectionEventsGenerator(is_array($eventsGenerator) ? $eventsGenerator : [$eventsGenerator]);
             }
+
             return $eventsGenerator;
         }
 
@@ -129,14 +131,14 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * Configure the dispatcher
+     * Configure the dispatcher.
      */
-    protected abstract function configure();
+    abstract protected function configure(): void;
 
     /**
-     * This method should only be called for tests purposes (helps handling callbacks towards mocked dependencies)
+     * This method should only be called for tests purposes (helps handling callbacks towards mocked dependencies).
      */
-    final public function reConfigure()
+    final public function reConfigure(): void
     {
         $this->actionMatchers = [];
         $this->beforeDispatchExecutors = [];
@@ -145,34 +147,39 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * Let store decide what to do when the dispatch process failed
+     * Let store decide what to do when the dispatch process failed.
+     *
      * @param Action $action
+     *
      * @return EventsGenerator
+     *
      * @throws StoreNotRunnableException
      */
     public function onDispatchFailure($action)
     {
-        throw new StoreNotRunnableException("Cant' dispatch action " . $action->__toString() . " on store " . $this->getName() . " : It does not match anything");
+        throw new StoreNotRunnableException("Cant' dispatch action ".$action->__toString().' on store '.$this->getName().' : It does not match anything');
     }
 
     /**
-     * Used for debug purposes mainly
+     * Used for debug purposes mainly.
+     *
      * @return $this
      */
     public function dumpAction()
     {
-        return $this->newActionMatcher()->thenExecute(function($action) {
-            echo "Action '" . $action->getName() . "' : " . var_export($action->getProperties(), true) . "\n";
+        return $this->newActionMatcher()->thenExecute(function ($action) {
+            echo "Action '".$action->getName()."' : ".var_export($action->getProperties(), true)."\n";
         });
     }
 
     /**
      * @param int $percentage
+     *
      * @return $this
      */
     public function setRunPercentage($percentage)
     {
-        $this->executeOnlyIf("percentage", function() use ($percentage) {
+        $this->executeOnlyIf('percentage', function () use ($percentage) {
             return mt_rand(1, 100) <= $percentage;
         });
 
@@ -182,19 +189,21 @@ abstract class DispatcherStore extends BaseStore
     /**
      * @param string $from
      * @param string $to
+     *
      * @return $this
      */
     public function copyProperty($from, $to)
     {
-        return $this->thenExecute(function($action) use ($from, $to) {
+        return $this->thenExecute(function ($action) use ($from, $to) {
             /** @var Action $action */
             $action->addProperty($to, $action->getProperty($from));
         });
     }
 
     /**
-     * @param string $guardName
+     * @param string   $guardName
      * @param callable $callable
+     *
      * @return $this
      */
     public function executeOnlyIf($guardName, $callable)
@@ -206,6 +215,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function executeBeforeDispatch($callable)
@@ -217,6 +227,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function executeAfterDispatch($callable)
@@ -228,6 +239,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function executeOnDispatchFailure($callable)
@@ -259,6 +271,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param string $propertyName
+     *
      * @return $this
      */
     public function ifProperty($propertyName)
@@ -270,6 +283,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param mixed $value
+     *
      * @return $this
      */
     public function is($value)
@@ -296,6 +310,7 @@ abstract class DispatcherStore extends BaseStore
     /**
      * @param mixed $minValue
      * @param mixed $maxValue
+     *
      * @return $this
      */
     public function isBetween($minValue, $maxValue)
@@ -306,6 +321,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param array $acceptedValues
+     *
      * @return $this
      */
     public function in($acceptedValues)
@@ -315,6 +331,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param mixed $acceptedValues
+     *
      * @return $this
      */
     public function containsKeys($acceptedValues)
@@ -332,6 +349,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function matches($callable)
@@ -341,6 +359,7 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function thenExecute($callable)
@@ -352,11 +371,13 @@ abstract class DispatcherStore extends BaseStore
 
     /**
      * @param Matcher $matcher
+     *
      * @return $this
      */
     protected function addMatcher($matcher)
     {
         $this->getLastActionMatcher()->getCurrentMatcher()->addMatcher($matcher);
+
         return $this;
     }
 
@@ -369,16 +390,23 @@ abstract class DispatcherStore extends BaseStore
     }
 
     /**
-     * @param callable $callable
+     * @param callable|string $callable
+     *
      * @return callable
      */
     protected function buildExecutor($callable)
     {
-        if (is_string($callable)) {
-            // special case for method inside current class
-            $callable = [$this, $callable];
+        if (is_callable($callable)) {
+            return $callable;
         }
 
-        return $callable;
+        // special case for method inside current class
+        $instanceCallable = [$this, $callable];
+
+        if (!is_callable($instanceCallable)) {
+            throw new \InvalidArgumentException("Method '$callable' does not exist on ".get_class($this));
+        }
+
+        return $instanceCallable;
     }
 }

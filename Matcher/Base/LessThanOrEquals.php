@@ -16,6 +16,7 @@ class LessThanOrEquals implements Matcher
 
     /**
      * ContainsKeys constructor.
+     *
      * @param mixed $maxValue
      */
     public function __construct($maxValue)
@@ -25,6 +26,7 @@ class LessThanOrEquals implements Matcher
 
     /**
      * @param mixed $maxValue
+     *
      * @return Matcher
      */
     public static function build($maxValue)

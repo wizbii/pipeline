@@ -6,25 +6,20 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wizbii\PipelineBundle\Service\Pipeline;
-use Wizbii\PipelineBundle\Service\PipelineProvider;
 
 class FrontendPipelineCommand extends ContainerAwareCommand
 {
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int|null|void
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $consumers = $this->getConsumers($input->getOption('direct'));
         $asJson = $input->getOption('json');
 
-        $output->write($asJson ? json_encode($consumers) : join(" ", $consumers));
+        $output->write($asJson ? json_encode($consumers) : join(' ', $consumers));
+
+        return 0;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pipeline:frontend:list')
@@ -33,9 +28,12 @@ class FrontendPipelineCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function getConsumers(bool $directConsumers)
+    /**
+     * @return string[]
+     */
+    protected function getConsumers(bool $directConsumers): array
     {
-        $serviceId = $directConsumers ? "pipeline.consumers.direct" : "pipeline.consumers";
+        $serviceId = $directConsumers ? 'pipeline.consumers.direct' : 'pipeline.consumers';
 
         return $this->getContainer()->get($serviceId)->getArrayCopy();
     }

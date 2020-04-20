@@ -13,7 +13,7 @@ class StoreTest extends BaseTestCase
      */
     public function isNeverTriggered()
     {
-        $store = new Store("identity_card");
+        $store = new Store('identity_card');
         $this->assertThat($store->isNeverTriggered(), $this->isTrue());
     }
 
@@ -22,8 +22,8 @@ class StoreTest extends BaseTestCase
      */
     public function isTriggeredByAction()
     {
-        $store = new Store("identity_card");
-        $action = new Action("first_name_updated");
+        $store = new Store('identity_card');
+        $action = new Action('first_name_updated');
         $store->addTriggeredByAction($action);
         $this->assertThat($store->isNeverTriggered(), $this->isFalse());
         $this->assertThat($store->isTriggeredByAction($action), $this->isTrue());
@@ -34,8 +34,8 @@ class StoreTest extends BaseTestCase
      */
     public function isTriggeredByStore()
     {
-        $store = new Store("identity_card");
-        $anotherStore = new Store("profile_network");
+        $store = new Store('identity_card');
+        $anotherStore = new Store('profile_network');
         $store->addTriggeredByStore($anotherStore);
         $this->assertThat($store->isNeverTriggered(), $this->isFalse());
         $this->assertThat($store->isTriggeredByStore($anotherStore), $this->isTrue());
@@ -46,9 +46,9 @@ class StoreTest extends BaseTestCase
      */
     public function dependsOnStore()
     {
-        $store = new Store("identity_card");
-        $aSecondStore = new Store("profile_network");
-        $aThirdStore = new Store("profile_friends");
+        $store = new Store('identity_card');
+        $aSecondStore = new Store('profile_network');
+        $aThirdStore = new Store('profile_friends');
         $store->addTriggeredByStore($aSecondStore);
         $aSecondStore->addTriggeredByStore($aThirdStore);
         // aThirdStore => aSecondStore => store
@@ -60,9 +60,9 @@ class StoreTest extends BaseTestCase
      */
     public function doesNotDependOnStore()
     {
-        $store = new Store("identity_card");
-        $aSecondStore = new Store("profile_network");
-        $aThirdStore = new Store("profile_friends");
+        $store = new Store('identity_card');
+        $aSecondStore = new Store('profile_network');
+        $aThirdStore = new Store('profile_friends');
         $store->addTriggeredByStore($aSecondStore);
         // aSecondStore => store but aThirdStore is not wired
         $this->assertThat($store->dependsOnStore($aThirdStore), $this->isFalse());

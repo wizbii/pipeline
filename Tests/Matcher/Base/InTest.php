@@ -12,8 +12,8 @@ class InTest extends BaseTestCase
      */
     public function doesMatch()
     {
-        $matcher = new In(["foo", "bar"]);
-        $this->assertThat($matcher->matches("foo"), $this->isTrue());
+        $matcher = new In(['foo', 'bar']);
+        $this->assertThat($matcher->matches('foo'), $this->isTrue());
     }
 
     /**
@@ -21,8 +21,8 @@ class InTest extends BaseTestCase
      */
     public function doesNotMatchOnNonArray()
     {
-        $matcher = new In("foo");
-        $this->assertThat($matcher->matches("foo"), $this->isFalse());
+        $matcher = new In('foo');
+        $this->assertThat($matcher->matches('foo'), $this->isFalse());
     }
 
     /**
@@ -30,7 +30,7 @@ class InTest extends BaseTestCase
      */
     public function doesNotMatch()
     {
-        $matcher = new In(["foo", "bar"]);
-        $this->assertThat($matcher->matches(["foo" => "hello"]), $this->isFalse());
+        $matcher = new In(['foo', 'bar']);
+        $this->assertThat($matcher->matches(['foo' => 'hello']), $this->isFalse());
     }
 }

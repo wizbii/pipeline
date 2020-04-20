@@ -6,14 +6,14 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * This is the class that validates and merges configuration from your app/config files
+ * This is the class that validates and merges configuration from your app/config files.
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
  */
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
@@ -32,9 +32,9 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('vhost')->end()
                     ->end()
                 ->end()
-                ->arrayNode("actions")
+                ->arrayNode('actions')
                     ->useAttributeAsKey('name')
-                    ->prototype("array")
+                    ->prototype('array')
                         ->children()
                             ->enumNode('type')->values(['direct', 'funnel'])->defaultValue('funnel')->end()
                             ->arrayNode('triggered_by_events')
@@ -43,9 +43,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode("stores")
+                ->arrayNode('stores')
                     ->useAttributeAsKey('name')
-                        ->prototype("array")
+                        ->prototype('array')
                             ->children()
                                 ->scalarNode('service')->end()
                                 ->arrayNode('triggered_by_actions')

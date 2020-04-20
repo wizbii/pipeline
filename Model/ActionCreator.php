@@ -16,6 +16,7 @@ class ActionCreator
 
     /**
      * ActionCreator constructor.
+     *
      * @param Action $createdAction
      */
     public function __construct($createdAction)
@@ -34,7 +35,7 @@ class ActionCreator
     /**
      * @param Action $createdAction
      */
-    public function setCreatedAction($createdAction)
+    public function setCreatedAction($createdAction): void
     {
         $this->createdAction = $createdAction;
     }
@@ -50,7 +51,7 @@ class ActionCreator
     /**
      * @param Event[] $triggeredByEvents
      */
-    public function setTriggeredByEvents($triggeredByEvents)
+    public function setTriggeredByEvents($triggeredByEvents): void
     {
         $this->triggeredByEvents = $triggeredByEvents;
     }
@@ -58,14 +59,15 @@ class ActionCreator
     /**
      * @param Event $event
      */
-    public function addTriggeredByEvent($event)
+    public function addTriggeredByEvent($event): void
     {
         $this->triggeredByEvents[] = $event;
     }
 
     /**
      * @param string $name
-     * @param array $properties
+     * @param array  $properties
+     *
      * @return Action
      */
     public function buildAction($name, $properties)

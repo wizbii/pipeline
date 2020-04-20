@@ -12,10 +12,10 @@ class ActionTest extends BaseTestCase
      */
     public function hasProperty()
     {
-        $action = new Action("profile_updated");
-        $action->addProperty("profile_slug", "benjamin_ducousso");
-        $this->assertThat($action->hasProperty("profile_slug"), $this->isTrue());
-        $this->assertThat($action->getProperty("profile_slug"), $this->equalTo("benjamin_ducousso"));
+        $action = new Action('profile_updated');
+        $action->addProperty('profile_slug', 'benjamin_ducousso');
+        $this->assertThat($action->hasProperty('profile_slug'), $this->isTrue());
+        $this->assertThat($action->getProperty('profile_slug'), $this->equalTo('benjamin_ducousso'));
     }
 
     /**
@@ -23,9 +23,9 @@ class ActionTest extends BaseTestCase
      */
     public function doesNotHaveProperty()
     {
-        $action = new Action("profile_updated");
-        $this->assertThat($action->hasProperty("profile_slug"), $this->isFalse());
-        $this->assertThat($action->getProperty("profile_slug"), $this->isNull());
-        $this->assertThat($action->getProperty("profile_slug", "defaultValue"), $this->equalTo("defaultValue"));
+        $action = new Action('profile_updated');
+        $this->assertThat($action->hasProperty('profile_slug'), $this->isFalse());
+        $this->assertThat($action->getProperty('profile_slug'), $this->isNull());
+        $this->assertThat($action->getProperty('profile_slug', 'defaultValue'), $this->equalTo('defaultValue'));
     }
 }
