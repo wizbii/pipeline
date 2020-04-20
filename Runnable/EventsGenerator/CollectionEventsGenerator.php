@@ -16,7 +16,7 @@ class CollectionEventsGenerator implements EventsGenerator
     /**
      * @param DataBag[] $dataBags
      */
-    public function setDataBags($dataBags)
+    public function setDataBags($dataBags): void
     {
         $this->dataBags = $dataBags;
     }
@@ -24,13 +24,14 @@ class CollectionEventsGenerator implements EventsGenerator
     /**
      * @param DataBag $dataBag
      */
-    public function addDataBag($dataBag)
+    public function addDataBag($dataBag): void
     {
         $this->dataBags[] = $dataBag;
     }
 
     /**
      * CollectionEventsGenerator constructor.
+     *
      * @param DataBag[] $dataBags
      */
     public function __construct($dataBags = [])

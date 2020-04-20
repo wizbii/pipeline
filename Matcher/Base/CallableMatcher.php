@@ -6,11 +6,7 @@ class CallableMatcher implements Matcher
 {
     public function matches($value)
     {
-        if (is_callable($this->callable)) {
-            return call_user_func_array($this->callable, [$value]);
-        }
-
-        return false;
+        return call_user_func_array($this->callable, [$value]);
     }
 
     /**
@@ -18,20 +14,15 @@ class CallableMatcher implements Matcher
      */
     protected $callable;
 
-    /**
-     * CallableMatcher constructor.
-     * @param callable $callable
-     */
-    public function __construct($callable)
+    public function __construct(callable $callable)
     {
         $this->callable = $callable;
     }
 
     /**
-     * @param callable $callable
      * @return Matcher
      */
-    public static function build($callable)
+    public static function build(callable $callable)
     {
         return new self($callable);
     }

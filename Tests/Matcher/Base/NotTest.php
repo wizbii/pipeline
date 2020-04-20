@@ -13,8 +13,8 @@ class NotTest extends BaseTestCase
      */
     public function matchesOnScalar()
     {
-        $matcher = new Not("foo");
-        $this->assertThat($matcher->matches("bar"), $this->isTrue());
+        $matcher = new Not('foo');
+        $this->assertThat($matcher->matches('bar'), $this->isTrue());
     }
 
     /**
@@ -23,7 +23,7 @@ class NotTest extends BaseTestCase
     public function matchesOnMatcher()
     {
         $matcher = new Not(new EmptyMatcher());
-        $this->assertThat($matcher->matches("bar"), $this->isTrue());
+        $this->assertThat($matcher->matches('bar'), $this->isTrue());
     }
 
     /**
@@ -31,8 +31,8 @@ class NotTest extends BaseTestCase
      */
     public function doesNotMatchOnScalar()
     {
-        $matcher = new Not("foo");
-        $this->assertThat($matcher->matches("foo"), $this->isFalse());
+        $matcher = new Not('foo');
+        $this->assertThat($matcher->matches('foo'), $this->isFalse());
     }
 
     /**
@@ -41,6 +41,6 @@ class NotTest extends BaseTestCase
     public function doesNotMatchOnMatcher()
     {
         $matcher = new Not(new EmptyMatcher());
-        $this->assertThat($matcher->matches(""), $this->isFalse());
+        $this->assertThat($matcher->matches(''), $this->isFalse());
     }
 }

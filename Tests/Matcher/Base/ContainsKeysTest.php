@@ -12,8 +12,8 @@ class ContainsKeysTest extends BaseTestCase
      */
     public function doesMatch()
     {
-        $matcher = new ContainsKeys(["foo", "bar"]);
-        $this->assertThat($matcher->matches(["foo" => "hello", "bar" => "world"]), $this->isTrue());
+        $matcher = new ContainsKeys(['foo', 'bar']);
+        $this->assertThat($matcher->matches(['foo' => 'hello', 'bar' => 'world']), $this->isTrue());
     }
 
     /**
@@ -21,8 +21,8 @@ class ContainsKeysTest extends BaseTestCase
      */
     public function doesNotMatchOnNonArray()
     {
-        $matcher = new ContainsKeys(["foo", "bar"]);
-        $this->assertThat($matcher->matches("hello"), $this->isFalse());
+        $matcher = new ContainsKeys(['foo', 'bar']);
+        $this->assertThat($matcher->matches('hello'), $this->isFalse());
     }
 
     /**
@@ -30,7 +30,7 @@ class ContainsKeysTest extends BaseTestCase
      */
     public function doesNotMatch()
     {
-        $matcher = new ContainsKeys(["foo", "bar"]);
-        $this->assertThat($matcher->matches(["foo" => "hello"]), $this->isFalse());
+        $matcher = new ContainsKeys(['foo', 'bar']);
+        $this->assertThat($matcher->matches(['foo' => 'hello']), $this->isFalse());
     }
 }

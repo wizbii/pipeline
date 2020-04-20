@@ -9,6 +9,7 @@ class Is implements Matcher
         if ($this->expectedValue instanceof Matcher) {
             return $this->expectedValue->matches($value);
         }
+
         return $value === $this->expectedValue;
     }
 
@@ -19,6 +20,7 @@ class Is implements Matcher
 
     /**
      * Is constructor.
+     *
      * @param mixed $expectedValue
      */
     public function __construct($expectedValue)
@@ -29,14 +31,15 @@ class Is implements Matcher
     /**
      * @param mixed|Matcher $expectedValue
      */
-    public function setExpectedValue($expectedValue)
+    public function setExpectedValue($expectedValue): void
     {
         $this->expectedValue = $expectedValue;
     }
 
     /**
      * @param mixed|Matcher $expectedValue
-     * @return Matcher
+     *
+     * @return self
      */
     public static function build($expectedValue = null)
     {

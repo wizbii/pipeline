@@ -16,6 +16,7 @@ class GreaterThanOrEquals implements Matcher
 
     /**
      * ContainsKeys constructor.
+     *
      * @param mixed $minValue
      */
     public function __construct($minValue)
@@ -25,6 +26,7 @@ class GreaterThanOrEquals implements Matcher
 
     /**
      * @param mixed $minValue
+     *
      * @return Matcher
      */
     public static function build($minValue)

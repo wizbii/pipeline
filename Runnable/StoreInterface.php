@@ -9,7 +9,8 @@ interface StoreInterface
 {
     /**
      * @param Action $action
-     * @return EventsGenerator
+     *
+     * @return EventsGenerator|null
      */
     public function run($action);
 

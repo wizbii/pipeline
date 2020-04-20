@@ -9,6 +9,7 @@ class Not implements Matcher
         if ($this->expectedValue instanceof Matcher) {
             return !$this->expectedValue->matches($value);
         }
+
         return $value !== $this->expectedValue;
     }
 
@@ -19,6 +20,7 @@ class Not implements Matcher
 
     /**
      * Not constructor.
+     *
      * @param mixed $expectedValue
      */
     public function __construct($expectedValue)
@@ -28,6 +30,7 @@ class Not implements Matcher
 
     /**
      * @param mixed|Matcher $expectedValue
+     *
      * @return Matcher
      */
     public static function build($expectedValue)

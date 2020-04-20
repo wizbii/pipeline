@@ -17,9 +17,9 @@ class ActionMatcherTest extends BaseTestCase
     public function doesMatchOnActionName()
     {
         $actionMatcher = new ActionMatcher();
-        $actionMatcher->addMatcherOnActionName()->addMatcher(new Is("foo"));
+        $actionMatcher->addMatcherOnActionName()->addMatcher(new Is('foo'));
 
-        $this->assertThat($actionMatcher->matches(new Action("foo")), $this->isTrue());
+        $this->assertThat($actionMatcher->matches(new Action('foo')), $this->isTrue());
     }
 
     /**
@@ -28,9 +28,9 @@ class ActionMatcherTest extends BaseTestCase
     public function doesMatchOnPropertyNames()
     {
         $actionMatcher = new ActionMatcher();
-        $actionMatcher->addMatcherOnPropertyName("hello")->addMatcher(new Is("world"));
-        $action = new Action("foo");
-        $action->addProperty("hello", "world");
+        $actionMatcher->addMatcherOnPropertyName('hello')->addMatcher(new Is('world'));
+        $action = new Action('foo');
+        $action->addProperty('hello', 'world');
 
         $this->assertThat($actionMatcher->matches($action), $this->isTrue());
     }
@@ -41,12 +41,12 @@ class ActionMatcherTest extends BaseTestCase
     public function doesMatch()
     {
         $actionMatcher = new ActionMatcher();
-        $actionMatcher->addMatcherOnPropertyName("foo");
-        $actionMatcher->addMatcherOnPropertyName("hello")->addMatcher(new Is("world"));
-        $actionMatcher->addMatcherOnPropertyName("profile_id")->addMatcher(new Not(new EmptyMatcher()));
-        $action = new Action("foo");
-        $action->addProperty("hello", "world");
-        $action->addProperty("profile_id", "john");
+        $actionMatcher->addMatcherOnPropertyName('foo');
+        $actionMatcher->addMatcherOnPropertyName('hello')->addMatcher(new Is('world'));
+        $actionMatcher->addMatcherOnPropertyName('profile_id')->addMatcher(new Not(new EmptyMatcher()));
+        $action = new Action('foo');
+        $action->addProperty('hello', 'world');
+        $action->addProperty('profile_id', 'john');
 
         $this->assertThat($actionMatcher->matches($action), $this->isTrue());
     }
@@ -57,9 +57,9 @@ class ActionMatcherTest extends BaseTestCase
     public function doesNotMatchOnActionName()
     {
         $actionMatcher = new ActionMatcher();
-        $actionMatcher->addMatcherOnActionName()->addMatcher(new Is("foo"));
+        $actionMatcher->addMatcherOnActionName()->addMatcher(new Is('foo'));
 
-        $this->assertThat($actionMatcher->matches(new Action("bar")), $this->isFalse());
+        $this->assertThat($actionMatcher->matches(new Action('bar')), $this->isFalse());
     }
 
     /**
@@ -68,9 +68,9 @@ class ActionMatcherTest extends BaseTestCase
     public function doesNotMatchOnPropertyName()
     {
         $actionMatcher = new ActionMatcher();
-        $actionMatcher->addMatcherOnPropertyName("hello")->addMatcher(new Is("world"));
-        $action = new Action("foo");
-        $action->addProperty("hello", "john");
+        $actionMatcher->addMatcherOnPropertyName('hello')->addMatcher(new Is('world'));
+        $action = new Action('foo');
+        $action->addProperty('hello', 'john');
 
         $this->assertThat($actionMatcher->matches($action), $this->isFalse());
     }

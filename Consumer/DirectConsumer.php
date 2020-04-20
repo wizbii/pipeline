@@ -47,7 +47,8 @@ class DirectConsumer implements ConsumerInterface
         $eventContent = json_decode($msg->body, true);
 
         if (json_last_error()) {
-            $this->logger->error(sprintf("Invalid json: %s, body: %s", json_last_error_msg(), $msg->body));
+            $this->logger->error(sprintf('Invalid json: %s, body: %s', json_last_error_msg(), $msg->body));
+
             return;
         }
 
@@ -56,6 +57,7 @@ class DirectConsumer implements ConsumerInterface
 
         if (!$actionCreator) {
             $this->logger->error("Can't find any valid action creator for event '$this->eventName");
+
             return;
         }
 

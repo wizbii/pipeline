@@ -7,7 +7,9 @@ class ComposableEventsGenerator implements EventsGenerator
     public function produce()
     {
         foreach ($this->eventsGenerators as $eventsGenerator) {
-            if ($eventsGenerator instanceof NullEventsGenerator) continue;
+            if ($eventsGenerator instanceof NullEventsGenerator) {
+                continue;
+            }
 
             foreach ($eventsGenerator->produce() as $product) {
                 yield $product;
@@ -18,7 +20,7 @@ class ComposableEventsGenerator implements EventsGenerator
     /**
      * @param EventsGenerator[] $eventsGenerators
      */
-    public function setDataBags($eventsGenerators)
+    public function setDataBags($eventsGenerators): void
     {
         $this->eventsGenerators = $eventsGenerators;
     }
@@ -26,7 +28,7 @@ class ComposableEventsGenerator implements EventsGenerator
     /**
      * @param EventsGenerator $eventsGenerator
      */
-    public function addEventsGenerator($eventsGenerator)
+    public function addEventsGenerator($eventsGenerator): void
     {
         $this->eventsGenerators[] = $eventsGenerator;
     }

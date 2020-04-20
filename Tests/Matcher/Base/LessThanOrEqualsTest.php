@@ -22,9 +22,9 @@ class LessThanOrEqualsTest extends BaseTestCase
      */
     public function doesMatchOnString()
     {
-        $matcher = new LessThanOrEquals("b");
-        $this->assertThat($matcher->matches("b"), $this->isTrue());
-        $this->assertThat($matcher->matches("a"), $this->isTrue());
+        $matcher = new LessThanOrEquals('b');
+        $this->assertThat($matcher->matches('b'), $this->isTrue());
+        $this->assertThat($matcher->matches('a'), $this->isTrue());
     }
 
     /**

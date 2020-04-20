@@ -9,7 +9,8 @@ class EventDispatcher implements EventDispatcherInterface
 {
     /**
      * @param string $eventName
-     * @param array $eventConfig
+     * @param array  $eventConfig
+     *
      * @return bool
      */
     public function dispatch($eventName, $eventConfig)
@@ -25,12 +26,12 @@ class EventDispatcher implements EventDispatcherInterface
             return false;
         }
 
-        $this->logger->info("Dispatching event.", [
+        $this->logger->info('Dispatching event.', [
             'event_name' => $eventName,
             'event_properties' => $eventConfig,
         ]);
 
-        $producer->publish(json_encode($eventConfig));
+        $producer->publish(json_encode($eventConfig, JSON_THROW_ON_ERROR));
 
         return true;
     }

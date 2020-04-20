@@ -6,6 +6,6 @@ class NullEventsGenerator implements EventsGenerator
 {
     public function produce()
     {
-        // nothing to do
+        return []; // nothing to do
     }
 }

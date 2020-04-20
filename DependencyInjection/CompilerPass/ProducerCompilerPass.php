@@ -17,7 +17,7 @@ class ProducerCompilerPass implements CompilerPassInterface
         $definition = $container->getDefinition('pipeline.producers');
 
         foreach ($container->findTaggedServiceIds('pipeline.back.producer') as $id => $attributes) {
-            $name = str_replace("pipeline.producer.", "", $id);
+            $name = str_replace('pipeline.producer.', '', $id);
             $definition->addMethodCall('set', [$name, new Reference($id)]);
         }
     }

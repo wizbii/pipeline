@@ -22,9 +22,9 @@ class GreaterThanOrEqualsTest extends BaseTestCase
      */
     public function doesMatchOnString()
     {
-        $matcher = new GreaterThanOrEquals("a");
-        $this->assertThat($matcher->matches("a"), $this->isTrue());
-        $this->assertThat($matcher->matches("b"), $this->isTrue());
+        $matcher = new GreaterThanOrEquals('a');
+        $this->assertThat($matcher->matches('a'), $this->isTrue());
+        $this->assertThat($matcher->matches('b'), $this->isTrue());
     }
 
     /**

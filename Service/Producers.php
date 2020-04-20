@@ -2,9 +2,14 @@
 
 namespace Wizbii\PipelineBundle\Service;
 
+use Countable;
+use IteratorAggregate;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
-class Producers implements \IteratorAggregate, \Countable
+/**
+ * @phpstan-implements IteratorAggregate<string, Producer>
+ */
+class Producers implements IteratorAggregate, Countable
 {
     /**
      * Parameter storage.
@@ -18,7 +23,7 @@ class Producers implements \IteratorAggregate, \Countable
      *
      * @param Producer[] $producers An array of Producer
      */
-    public function __construct(array $producers = array())
+    public function __construct(array $producers = [])
     {
         $this->producers = $producers;
     }
@@ -36,9 +41,9 @@ class Producers implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter keys.
      *
-     * @return array An array of Producer keys
+     * @return string[] An array of Producer keys
      */
-    public function keys()
+    public function keys(): array
     {
         return array_keys($this->producers);
     }
@@ -48,7 +53,7 @@ class Producers implements \IteratorAggregate, \Countable
      *
      * @param Producer[] $producers An array of producers
      */
-    public function replace(array $producers = array())
+    public function replace(array $producers = []): void
     {
         $this->producers = $producers;
     }
@@ -58,17 +63,18 @@ class Producers implements \IteratorAggregate, \Countable
      *
      * @param Producer[] $producers An array of producers
      */
-    public function add(array $producers = array())
+    public function add(array $producers = []): void
     {
         $this->producers = array_replace($this->producers, $producers);
     }
 
     /**
      * Returns a Producer by name.
-     * @param string $key The key
+     *
+     * @param string   $key     The key
      * @param Producer $default The default value
      *
-     * @return Producer
+     * @return Producer|null
      */
     public function get($key, $default = null)
     {
@@ -78,10 +84,10 @@ class Producers implements \IteratorAggregate, \Countable
     /**
      * Sets a Producer by name.
      *
-     * @param string $key   The key
-     * @param Producer[]  $producer The value
+     * @param string   $key      The key
+     * @param Producer $producer The value
      */
-    public function set($key, $producer)
+    public function set($key, $producer): void
     {
         $this->producers[$key] = $producer;
     }
@@ -103,7 +109,7 @@ class Producers implements \IteratorAggregate, \Countable
      *
      * @param string $key The key
      */
-    public function remove($key)
+    public function remove($key): void
     {
         unset($this->producers[$key]);
     }
@@ -111,7 +117,7 @@ class Producers implements \IteratorAggregate, \Countable
     /**
      * Returns an iterator for Producers.
      *
-     * @return \ArrayIterator An \ArrayIterator instance
+     * @return \ArrayIterator<string, Producer>
      */
     public function getIterator()
     {

@@ -14,12 +14,12 @@ class EventDispatcherTest extends BaseTestCase
      */
     protected $eventDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->eventDispatcher = new EventDispatcher();
         $this->eventDispatcher->logger = new NullLogger();
-        $this->eventDispatcher->producers = New Producers();
+        $this->eventDispatcher->producers = new Producers();
     }
 
     /**
@@ -27,11 +27,11 @@ class EventDispatcherTest extends BaseTestCase
      */
     public function dispatch()
     {
-        $producer = $this->getMockBuilder('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface')->setMethods(["publish"])->getMock();
-        $producer->expects($this->once())->method("publish");
-        $this->eventDispatcher->producers->set("profile_created", $producer);
+        $producer = $this->getMockBuilder('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface')->setMethods(['publish'])->getMock();
+        $producer->expects($this->once())->method('publish');
+        $this->eventDispatcher->producers->set('profile_created', $producer);
 
-        $returnedValue = $this->eventDispatcher->dispatch("profile_created", ["profile_id" => "john"]);
+        $returnedValue = $this->eventDispatcher->dispatch('profile_created', ['profile_id' => 'john']);
         $this->assertThat($returnedValue, $this->isTrue());
     }
 
@@ -41,10 +41,10 @@ class EventDispatcherTest extends BaseTestCase
     public function unsupportedEvent()
     {
         $producer = $this->createMock('OldSound\RabbitMqBundle\RabbitMq\ProducerInterface');
-        $producer->expects($this->never())->method("publish");
-        $this->eventDispatcher->producers->set("profile_created", $producer);
+        $producer->expects($this->never())->method('publish');
+        $this->eventDispatcher->producers->set('profile_created', $producer);
 
-        $returnedValue = $this->eventDispatcher->dispatch("company_created", ["profile_id" => "wizbii"]);
+        $returnedValue = $this->eventDispatcher->dispatch('company_created', ['profile_id' => 'wizbii']);
         $this->assertThat($returnedValue, $this->isFalse());
     }
 }

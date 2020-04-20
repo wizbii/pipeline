@@ -7,7 +7,9 @@ class AndMatcher implements Matcher
     public function matches($value)
     {
         foreach ($this->matchers as $matcher) {
-            if (!$matcher->matches($value)) return false;
+            if (!$matcher->matches($value)) {
+                return false;
+            }
         }
 
         return true;
@@ -20,6 +22,7 @@ class AndMatcher implements Matcher
 
     /**
      * @param Matcher $matcher
+     *
      * @return $this
      */
     public function addMatcher($matcher)

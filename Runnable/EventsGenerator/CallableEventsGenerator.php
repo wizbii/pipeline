@@ -11,7 +11,6 @@ class CallableEventsGenerator implements EventsGenerator
 
     /**
      * CallableEventsGenerator constructor.
-     * @param callable $callable
      */
     public function __construct(callable $callable)
     {

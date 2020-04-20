@@ -6,14 +6,13 @@ use Psr\Log\LoggerInterface;
 
 class Producer extends \OldSound\RabbitMqBundle\RabbitMq\Producer
 {
-    public function publish($msgBody, $routingKey = '', $additionalProperties = array())
+    public function publish($msgBody, $routingKey = '', $additionalProperties = [], array $headers = null): void
     {
         try {
-            parent::publish($msgBody, $routingKey, $additionalProperties);
-        }
-        catch (\Exception $e) {
-            if (isset($this->logger)) {
-                $this->logger->error("Can't publish message. Error is " . $e->getMessage());
+            parent::publish($msgBody, $routingKey, $additionalProperties, $headers);
+        } catch (\Exception $e) {
+            if ($this->logger !== null) {
+                $this->logger->error("Can't publish message. Error is ".$e->getMessage());
             }
         }
     }
@@ -22,5 +21,4 @@ class Producer extends \OldSound\RabbitMqBundle\RabbitMq\Producer
      * @var LoggerInterface
      */
     public $logger;
-
 }

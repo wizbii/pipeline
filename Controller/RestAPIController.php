@@ -8,10 +8,10 @@ use Wizbii\PipelineBundle\Service\PipelineProvider;
 
 class RestAPIController
 {
-    public function getPipeline()
+    public function getPipeline(): Response
     {
         //var_dump($this->pipelineProvider->getCurrentPipeline()); exit;
-        return new Response($this->serializer->serialize($this->pipelineProvider->getCurrentPipeline(), "json"));
+        return new Response($this->serializer->serialize($this->pipelineProvider->getCurrentPipeline(), 'json'));
     }
 
     /**
@@ -23,4 +23,4 @@ class RestAPIController
      * @var PipelineProvider
      */
     public $pipelineProvider;
-} 
+}

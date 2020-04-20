@@ -4,8 +4,8 @@ namespace Wizbii\PipelineBundle\Model;
 
 class Store
 {
-    const ASYNCHRONOUS = "async";
-    const IMMEDIATE    = "immediate";
+    const ASYNCHRONOUS = 'async';
+    const IMMEDIATE = 'immediate';
 
     /**
      * @var string
@@ -34,6 +34,7 @@ class Store
 
     /**
      * Store constructor.
+     *
      * @param string $name
      */
     public function __construct($name)
@@ -60,7 +61,7 @@ class Store
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -76,7 +77,7 @@ class Store
     /**
      * @param string $service
      */
-    public function setService($service)
+    public function setService($service): void
     {
         $this->service = $service;
     }
@@ -92,7 +93,7 @@ class Store
     /**
      * @param Store[] $triggeredByStores
      */
-    public function setTriggeredByStores($triggeredByStores)
+    public function setTriggeredByStores($triggeredByStores): void
     {
         $this->triggeredByStores = $triggeredByStores;
     }
@@ -100,13 +101,14 @@ class Store
     /**
      * @param Store $store
      */
-    public function addTriggeredByStore($store)
+    public function addTriggeredByStore($store): void
     {
         $this->triggeredByStores[$store->getName()] = $store;
     }
 
     /**
-     * @param Store $store
+     * @param Store|null $store
+     *
      * @return bool
      */
     public function isTriggeredByStore($store)
@@ -116,13 +118,18 @@ class Store
 
     /**
      * @param Store $store
+     *
      * @return bool
      */
     public function dependsOnStore($store)
     {
         foreach ($this->triggeredByStores as $triggeredByStore) {
-            if ($triggeredByStore->getName() === $store->getName()) return true;
-            if ($triggeredByStore->dependsOnStore($store)) return true;
+            if ($triggeredByStore->getName() === $store->getName()) {
+                return true;
+            }
+            if ($triggeredByStore->dependsOnStore($store)) {
+                return true;
+            }
         }
 
         return false;
@@ -139,7 +146,7 @@ class Store
     /**
      * @param Action[] $triggeredByActions
      */
-    public function setTriggeredByActions($triggeredByActions)
+    public function setTriggeredByActions($triggeredByActions): void
     {
         $this->triggeredByActions = $triggeredByActions;
     }
@@ -147,13 +154,14 @@ class Store
     /**
      * @param Action $action
      */
-    public function addTriggeredByAction($action)
+    public function addTriggeredByAction($action): void
     {
         $this->triggeredByActions[$action->getName()] = $action;
     }
 
     /**
-     * @param Action $action
+     * @param Action|null $action
+     *
      * @return bool
      */
     public function isTriggeredByAction($action)
@@ -172,7 +180,7 @@ class Store
     /**
      * @param Event $triggeredEvent
      */
-    public function setTriggeredEvent($triggeredEvent)
+    public function setTriggeredEvent($triggeredEvent): void
     {
         $this->triggeredEvent = $triggeredEvent;
     }

@@ -6,7 +6,9 @@ class In implements Matcher
 {
     public function matches($value)
     {
-        if (!is_array($this->acceptedValues)) return false;
+        if (!is_array($this->acceptedValues)) {
+            return false;
+        }
 
         return in_array($value, $this->acceptedValues);
     }
@@ -18,6 +20,7 @@ class In implements Matcher
 
     /**
      * ContainsKeys constructor.
+     *
      * @param array $acceptedValues
      */
     public function __construct($acceptedValues)
@@ -27,6 +30,7 @@ class In implements Matcher
 
     /**
      * @param mixed $acceptedValues
+     *
      * @return Matcher
      */
     public static function build($acceptedValues)

@@ -7,7 +7,7 @@ use Wizbii\PipelineBundle\Model\DataBag;
 interface EventsGenerator
 {
     /**
-     * @return DataBag
+     * @return iterable<DataBag>
      */
     public function produce();
 }

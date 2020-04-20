@@ -6,8 +6,9 @@ interface EventDispatcherInterface
 {
     /**
      * @param string $eventName
-     * @param array $eventConfig
-     * @return boolean
+     * @param array  $eventConfig
+     *
+     * @return bool
      */
     public function dispatch($eventName, $eventConfig);
 }

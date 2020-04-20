@@ -8,7 +8,8 @@ interface ActionDispatcherInterface
 {
     /**
      * @param Action $action the action to be dispatched
-     * @return boolean
+     *
+     * @return bool
      */
     public function dispatch($action);
 }
