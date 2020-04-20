@@ -60,6 +60,7 @@ class DirectConsumer implements ConsumerInterface
         }
 
         $action = $actionCreator->buildAction($this->eventName, $eventContent);
+
         $this->actionDispatcher->dispatch($action);
     }
 }

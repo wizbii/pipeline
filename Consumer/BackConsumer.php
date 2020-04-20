@@ -19,6 +19,7 @@ class BackConsumer implements ConsumerInterface
         $eventContent = json_decode($content["original_body"], true);
         $pipeline = $this->pipelineProvider->getCurrentPipeline();
         $actionCreator = $pipeline->getActionCreatorFor($eventName);
+
         if (isset($actionCreator)) {
             $action = $actionCreator->buildAction($eventName, $eventContent);
             $this->actionDispatcher->dispatch($action);

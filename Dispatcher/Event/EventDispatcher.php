@@ -15,13 +15,21 @@ class EventDispatcher implements EventDispatcherInterface
     public function dispatch($eventName, $eventConfig)
     {
         $producer = $this->producers->get($eventName);
-        if (!isset($producer)) {
-            $this->logger->error("Can't find producer for event '$eventName'");
-            $this->logger->debug(var_export($this->producers->keys(), true));
+
+        if ($producer === null) {
+            $this->logger->error("Can't find producer to dispatch event.", [
+                'event_name' => $eventName,
+                'available_producers' => $this->producers->keys(),
+            ]);
 
             return false;
         }
-        $this->logger->info("[EventDispatcher] Going to dispatch " . $eventName . " with content : " . json_encode($eventConfig));
+
+        $this->logger->info("Dispatching event.", [
+            'event_name' => $eventName,
+            'event_properties' => $eventConfig,
+        ]);
+
         $producer->publish(json_encode($eventConfig));
 
         return true;
