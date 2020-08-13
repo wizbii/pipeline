@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Wizbii\PipelineBundle\Consumer\CommandConsumer;
 use Wizbii\PipelineBundle\Consumer\DirectConsumer;
+use Wizbii\PipelineBundle\Consumer\MultipleConsumer;
 use Wizbii\PipelineBundle\Factory\PipelineFactory;
 use Wizbii\PipelineBundle\Model\Event;
 
@@ -58,9 +59,24 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
         $internalProducerId = 'old_sound_rabbit_mq.internal_pipeline_producer';
         $this->container->setDefinition($internalProducerId, $internalProducerDefinition);
 
+        $frontMultiConsumer = $this->container->register('pipeline.consumer.front_multi', MultipleConsumer::class)
+            ->setPublic(true)
+            ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'))
+            ->addMethodCall('setQosOptions', [0, 200]);
+
         // create event consumers for each incoming event
         foreach ($pipeline->getIncomingEvents() as $event) {
             $this->configureFrontConsumer($event, $internalProducerId);
+
+            if ($this->config['actions'][$event->getName()]['type'] !== 'direct') {
+                $frontMultiConsumer->addMethodCall('addQueue', [[
+                    'name' => $event->getName(),
+                    'callback' => [
+                        new Reference(sprintf('pipeline.consumer.front.%s_consumer', $event->getName())),
+                        'execute',
+                    ],
+                ]]);
+            }
         }
 
         // create event producers for each outgoing event
@@ -139,7 +155,6 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
                 ]
             ]
         ]);
-
     }
 
     private function setConsumerProcessTitle(Definition $definition, string $procTitle)
