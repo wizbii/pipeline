@@ -5,12 +5,14 @@ namespace Wizbii\PipelineBundle\Consumer;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 
 class FrontConsumer implements ConsumerInterface
 {
     public function execute(AMQPMessage $msg)
     {
-        echo 'catch event of type '.$this->eventName.". Dispatch it to backend consumer\n";
+        $this->logger->info("Catch event on frontend queue, dispatch it to backend consumer", ['event_name' => $this->eventName, 'body' => $msg->body]);
+
         $message = [
             'original_body' => $msg->body,
             'event_name' => $this->eventName,
@@ -28,4 +30,9 @@ class FrontConsumer implements ConsumerInterface
      * @var ProducerInterface
      */
     public $producer;
+
+    /**
+     * @var LoggerInterface
+     */
+    public $logger;
 }

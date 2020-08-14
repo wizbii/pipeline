@@ -185,6 +185,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             $frontConsumerDefinition
                 ->setProperty('eventName', $eventName)
                 ->setProperty('producer', new Reference($internalProducerId))
+                ->setProperty('logger', new Reference('monolog.logger.pipeline'))
                 ->setPublic(false);
 
             $amqpConsumerTag = 'pipeline.front.consumer';
