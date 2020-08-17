@@ -23,15 +23,27 @@ class ActionDispatcher implements ActionDispatcherInterface
      */
     public function dispatch($action)
     {
-        if ($this->logger instanceof ResettableInterface) {
-            $this->logger->reset();
-        }
-
         $this->logger->debug('Going to dispatch action', [
             'action_name' => $action->getName(),
             'action_properties' => $action->getProperties(),
         ]);
 
+        try {
+            return $this->runStores($action);
+        } finally {
+            if ($this->logger instanceof ResettableInterface) {
+                $this->logger->reset();
+            }
+        }
+    }
+
+    /**
+     * @param Action $action
+     *
+     * @throws \Throwable
+     */
+    private function runStores($action): bool
+    {
         $success = true;
 
         foreach ($this->pipelineProvider->getCurrentPipeline()->getStores() as $store) {
