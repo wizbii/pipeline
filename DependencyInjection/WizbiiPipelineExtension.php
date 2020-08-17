@@ -53,7 +53,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
                                        'type' => 'direct',
                                        'passive' => false,
                                        'durable' => true, ]])
-                                   ->addMethodCall('setQueueOptions', [['name' => null]])
+                                   ->addMethodCall('setQueueOptions', [['name' => null, 'declare' => false]])
                                    ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'))
                                    ->setProperty('logger', new Reference('monolog.logger.pipeline'));
         $internalProducerId = 'old_sound_rabbit_mq.internal_pipeline_producer';
@@ -90,7 +90,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
                                    'type' => 'direct',
                                    'passive' => false,
                                    'durable' => true, ]])
-                               ->addMethodCall('setQueueOptions', [['name' => null]])
+                               ->addMethodCall('setQueueOptions', [['name' => null, 'declare' => false]])
                                ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
             $producerId = sprintf('pipeline.producer.%s', $event->getName());
             $this->container->setDefinition($producerId, $producerDefinition);
