@@ -11,7 +11,10 @@ class FrontConsumer implements ConsumerInterface
 {
     public function execute(AMQPMessage $msg)
     {
-        $this->logger->info('Catch event on frontend queue, dispatch it to backend consumer', ['event_name' => $this->eventName, 'body' => $msg->body]);
+        $this->logger->info('Catch event on frontend queue, dispatch it to backend consumer', [
+            'event_name' => $this->eventName,
+            'body' => json_decode($msg->body, true) ?: $msg->body,
+        ]);
 
         $message = [
             'original_body' => $msg->body,
