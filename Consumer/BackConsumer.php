@@ -12,9 +12,9 @@ class BackConsumer implements ConsumerInterface
 {
     public function execute(AMQPMessage $msg)
     {
-        $content = json_decode($msg->body, true);
+        $content = json_decode($msg->body, true, 512, \JSON_THROW_ON_ERROR);
         $eventName = $content['event_name'];
-        $eventContent = json_decode($content['original_body'], true);
+        $eventContent = json_decode($content['original_body'], true, 512, \JSON_THROW_ON_ERROR);
         $pipeline = $this->pipelineProvider->getCurrentPipeline();
         $actionCreator = $pipeline->getActionCreatorFor($eventName);
 
