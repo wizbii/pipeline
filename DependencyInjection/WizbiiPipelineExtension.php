@@ -64,6 +64,8 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'))
             ->addMethodCall('setQosOptions', [0, 200]);
 
+        $this->addConsumerTimeouts($frontMultiConsumer);
+
         // create event consumers for each incoming event
         foreach ($pipeline->getIncomingEvents() as $event) {
             $this->configureFrontConsumer($event, $internalProducerId);
@@ -108,6 +110,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addMethodCall('setCallback', [[new Reference('pipeline.consumer.back'), 'execute']])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
 
+        $this->addConsumerTimeouts($backConsumer);
         $this->setConsumerProcessTitle($backConsumer, $pipelineQueueName);
 
         $this->container->setDefinition('old_sound_rabbit_mq.pipeline_back_consumer', $backConsumer);
@@ -205,11 +208,26 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addMethodCall('setQosOptions', [0, 200])
             ->addMethodCall('setCallback', [[new Reference($frontConsumerId), 'execute']])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
+
         $name = sprintf('old_sound_rabbit_mq.%s_consumer', $eventName);
 
+        $this->addConsumerTimeouts($amqpConsumer);
         $this->setConsumerProcessTitle($amqpConsumer, $procTitle);
 
         $this->container->setDefinition($name, $amqpConsumer);
+    }
+
+    private function addConsumerTimeouts(Definition $definition): void
+    {
+        if ($this->config['consumers']['idle_timeout'] > 0) {
+            $definition->addMethodCall('setIdleTimeout', [$this->config['consumers']['idle_timeout']]);
+            $definition->addMethodCall('setIdleTimeoutExitCode', [0]);
+        }
+
+        if ($this->config['consumers']['max_execution_time'] > 0) {
+            $definition->addMethodCall('setGracefulMaxExecutionDateTimeFromSecondsInTheFuture', [$this->config['consumers']['max_execution_time']]);
+            $definition->addMethodCall('setGracefulMaxExecutionTimeoutExitCode', [0]);
+        }
     }
 
     /**

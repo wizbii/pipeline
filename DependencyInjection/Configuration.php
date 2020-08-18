@@ -2,6 +2,7 @@
 
 namespace Wizbii\PipelineBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -20,9 +21,23 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('wizbii_pipeline');
 
+        /** @var ArrayNodeDefinition */
         $rootNode
             ->children()
                 ->scalarNode('name')->end()
+                ->arrayNode('consumers')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('idle_timeout')
+                            ->info('Exit consumers after an idle period, in seconds')
+                            ->defaultValue(0)
+                        ->end()
+                        ->integerNode('max_execution_time')
+                            ->info('Maximum execution time per consumer, in seconds')
+                            ->defaultValue(0)
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('connection')
                     ->children()
                         ->scalarNode('host')->end()
