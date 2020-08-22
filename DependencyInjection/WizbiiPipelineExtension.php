@@ -105,7 +105,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addTag('old_sound_rabbit_mq.base_amqp')
             ->addTag('old_sound_rabbit_mq.consumer')
             ->addMethodCall('setExchangeOptions', [['name' => $pipelineExchangeName, 'type' => 'direct']])
-            ->addMethodCall('setQueueOptions', [['name' => $pipelineQueueName]])
+            ->addMethodCall('setQueueOptions', [['name' => $pipelineQueueName, 'declare' => false]])
             ->addMethodCall('setQosOptions', [0, 200])
             ->addMethodCall('setCallback', [[new Reference('pipeline.consumer.back'), 'execute']])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));
