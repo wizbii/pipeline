@@ -2,13 +2,13 @@
 
 namespace Wizbii\PipelineBundle\Tests\Dispatcher\Event;
 
+use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Wizbii\PipelineBundle\Dispatcher\Event\EventDispatcher;
+use Wizbii\PipelineBundle\Model\DataBag;
 use Wizbii\PipelineBundle\Service\Producers;
 use Wizbii\PipelineBundle\Tests\BaseTestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
-use Wizbii\PipelineBundle\Model\DataBag;
 
 class EventDispatcherTest extends BaseTestCase
 {

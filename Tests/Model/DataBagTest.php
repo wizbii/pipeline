@@ -7,7 +7,6 @@ use Wizbii\PipelineBundle\Tests\BaseTestCase;
 
 class DataBagTest extends BaseTestCase
 {
-
     /**
      * @test
      */

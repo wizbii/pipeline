@@ -4,8 +4,8 @@ namespace Wizbii\PipelineBundle\Model;
 
 class Store
 {
-    const ASYNCHRONOUS = 'async';
-    const IMMEDIATE = 'immediate';
+    public const ASYNCHRONOUS = 'async';
+    public const IMMEDIATE = 'immediate';
 
     /**
      * @var string
