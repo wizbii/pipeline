@@ -7,6 +7,8 @@ namespace Wizbii\PipelineBundle\Model;
  */
 class DataBag implements \IteratorAggregate, \Countable
 {
+    const OPTION_PRIORITY = '_priority';
+
     /**
      * Parameter storage.
      *
@@ -108,6 +110,19 @@ class DataBag implements \IteratorAggregate, \Countable
     public function remove($key): void
     {
         unset($this->parameters[$key]);
+    }
+
+    /**
+     * @param int $priority A priority that will be added to the RabbitMQ message. Should be between 0 and 10.
+     * @throws InvalidArgumentException
+     */
+    public function setPriority(int $priority): void
+    {
+        if ($priority < 0 || $priority > 10) {
+            throw new \InvalidArgumentException('Priority must be an integer between 0-10');
+        }
+
+        $this->set(self::OPTION_PRIORITY, $priority);
     }
 
     /**
