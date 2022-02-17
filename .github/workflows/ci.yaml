@@ -44,4 +44,4 @@ jobs:
       - name: PHP CS Fixer
         run: php-cs-fixer fix --dry-run --diff
       - name: PHPStan
-        run: phpstan analyse . --level max --no-progress
+        run: phpstan analyse . --level 8 --no-progress

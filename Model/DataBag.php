@@ -115,7 +115,7 @@ class DataBag implements \IteratorAggregate, \Countable
     /**
      * @param int $priority A priority that will be added to the RabbitMQ message. Should be between 0 and 10.
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setPriority(int $priority): void
     {

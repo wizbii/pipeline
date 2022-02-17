@@ -37,7 +37,7 @@ final class MultipleConsumer extends BaseMultipleConsumer
     protected function queueDeclare(): void
     {
         foreach ($this->queues as $name => $options) {
-            list($queueName) = $this->getChannel()->queue_declare(
+            $result = $this->getChannel()->queue_declare(
                 $name,
                 $options['passive'] ?? false,
                 $options['durable'] ?? false,
@@ -47,6 +47,12 @@ final class MultipleConsumer extends BaseMultipleConsumer
                 $options['arguments'] ?? [],
                 $options['ticket'] ?? null
             );
+
+            if ($result === null) {
+                $queueName = $name;
+            } else {
+                $queueName = $result[0];
+            }
 
             if (isset($options['routing_keys']) && count($options['routing_keys']) > 0) {
                 foreach ($options['routing_keys'] as $routingKey) {
