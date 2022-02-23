@@ -4,8 +4,8 @@ namespace Wizbii\PipelineBundle\Model;
 
 class Store
 {
-    const ASYNCHRONOUS = 'async';
-    const IMMEDIATE = 'immediate';
+    public const ASYNCHRONOUS = 'async';
+    public const IMMEDIATE = 'immediate';
 
     /**
      * @var string
@@ -28,7 +28,7 @@ class Store
     protected $triggeredByActions = [];
 
     /**
-     * @var Event
+     * @var Event|null
      */
     protected $triggeredEvent;
 
@@ -174,6 +174,10 @@ class Store
      */
     public function getTriggeredEvent()
     {
+        if (empty($this->triggeredEvent)) {
+            throw new \LogicException('Store '.$this->name.' does not have a triggered event');
+        }
+
         return $this->triggeredEvent;
     }
 

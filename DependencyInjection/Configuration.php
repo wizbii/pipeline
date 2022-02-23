@@ -52,6 +52,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->children()
                             ->enumNode('type')->values(['direct', 'funnel'])->defaultValue('funnel')->end()
+                            ->booleanNode('with_priority')->defaultValue(false)->end()
                             ->arrayNode('triggered_by_events')
                                 ->prototype('scalar')->end()
                             ->end()

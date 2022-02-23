@@ -18,7 +18,7 @@ class DirectConsumerTest extends TestCase
 {
     use ProphecyTrait;
 
-    const EVENT_NAME = 'event_name';
+    public const EVENT_NAME = 'event_name';
 
     private $consumer;
 

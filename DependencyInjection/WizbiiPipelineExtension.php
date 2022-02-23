@@ -2,6 +2,7 @@
 
 namespace Wizbii\PipelineBundle\DependencyInjection;
 
+use PhpAmqpLib\Wire\AMQPTable;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -171,6 +172,9 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
     private function configureFrontConsumer(Event $event, string $internalProducerId): void
     {
         $eventName = $event->getName();
+        $withPriority = $this->config['actions'][$eventName]['with_priority'];
+
+        $queueArguments = $withPriority ? (new Definition(AMQPTable::class, [['x-max-priority' => 10]])) : null;
 
         if ($this->config['actions'][$eventName]['type'] === 'direct') {
             $frontConsumerDefinition = new Definition(DirectConsumer::class);
@@ -204,7 +208,7 @@ class WizbiiPipelineExtension extends Extension implements PrependExtensionInter
             ->addTag('old_sound_rabbit_mq.consumer')
             ->addTag($amqpConsumerTag)
             ->addMethodCall('setExchangeOptions', [['name' => $eventName, 'type' => 'direct']])
-            ->addMethodCall('setQueueOptions', [['name' => $eventName]])
+            ->addMethodCall('setQueueOptions', [['name' => $eventName, 'arguments' => $queueArguments]])
             ->addMethodCall('setQosOptions', [0, 200])
             ->addMethodCall('setCallback', [[new Reference($frontConsumerId), 'execute']])
             ->addArgument(new Reference('old_sound_rabbit_mq.connection.default'));

@@ -4,7 +4,7 @@ $finder = PhpCsFixer\Finder::create()
     ->in(['.'])
 ;
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setFinder($finder)
     ->setRules([
         '@Symfony' => true,
